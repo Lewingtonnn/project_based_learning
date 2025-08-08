@@ -12,8 +12,8 @@ I’m committing small projects and code snippets every day to track my growth, 
 |-----|-------|-------------|
 | Day 1 | FastAPI Intro +Asyncio and aiohttp| Built my first FastAPI app with endpoints and auto docs.Also worked on the asyncio and aiohttp and compared async with sync programming |
 | Day 2 | | Advanced FastAPI | Worked on dependencies, Background tasks, pydantic models and Validation, Response model and type hinting 
-| Day 3 | PostgreSQL + FastAPI DB Integration| Set up Postgres in Docker, connected it to FastAPI. |
-| Day 4 | ... | ... |
+| Day 3 |SQL| Learnt SQL from scratch from online resources like SQLbolt and SQLMode and completed the two  |
+| Day 4 | PostgreSQL + SQLAlchemy Integration|Worked on SQLMode and light SQLAlchemy, made my own database and connected it to my app using FastAPI |
 
 ---
 
