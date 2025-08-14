@@ -1,0 +1,120 @@
+[
+    {
+        "title": "465 North Park",
+        "property_link": "https://www.apartments.com/465-north-park-chicago-il/jvgpwg7/",
+        "address": "465 N Park Dr, IL 60611",
+        "property_reviews": "4.9",
+        "listing_verification": "Verified Listing",
+        "lease_options": "N/A",
+        "year_built": "2018",
+        "street": "465 N Park Dr",
+        "city": "N/A",
+        "state": "IL",
+        "zip_code": "60611",
+        "property_type": "N/A",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": "N/A",
+                "rent_price_range": "N/A",
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "678",
+                "unit": "3509",
+                "base_rent": "$3,205",
+                "availability": "availibility\nSep 21",
+                "details_link": "cmk4wkf"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "Foundry",
+        "property_link": "https://www.apartments.com/foundry-chicago-il/0erlj02/",
+        "address": "1475 N Kingsbury St, IL 60642",
+        "property_reviews": "4.9",
+        "listing_verification": "Verified Listing",
+        "lease_options": [
+            "12 - 15 Month Leases"
+        ],
+        "year_built": "2023",
+        "street": "1475 N Kingsbury St",
+        "city": "N/A",
+        "state": "IL",
+        "zip_code": "60642",
+        "property_type": "N/A",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": "N/A",
+                "rent_price_range": "N/A",
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "515",
+                "unit": "0513",
+                "base_rent": "$2,751",
+                "availability": "availibility\nNow",
+                "details_link": "lgtj72d"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "Luxe Logan Square",
+        "property_link": "https://www.apartments.com/luxe-logan-square-chicago-il/hdy23k3/",
+        "address": "1950 N Campbell Ave, IL 60647",
+        "property_reviews": "4.8",
+        "listing_verification": "Verified Listing",
+        "lease_options": [
+            "3 - 15 Month Leases"
+        ],
+        "year_built": "2017",
+        "street": "1950 N Campbell Ave",
+        "city": "N/A",
+        "state": "IL",
+        "zip_code": "60647",
+        "property_type": "N/A",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": "N/A",
+                "rent_price_range": "N/A",
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "565",
+                "unit": "322S",
+                "base_rent": "$2,164",
+                "availability": "availibility\nSep 26",
+                "details_link": "cj2l3zd"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "Straits Row",
+        "property_link": "https://www.apartments.com/straits-row-chicago-il/yv959ev/",
+        "address": "633 S La Salle St, IL 60605",
+        "property_reviews": "N/A",
+        "listing_verification": "Verified Listing",
+        "lease_options": [
+            "4 - 18 Month Leases"
+        ],
+        "year_built": "2025",
+        "street": "633 S La Salle St",
+        "city": "N/A",
+        "state": "IL",
+        "zip_code": "60605",
+        "property_type": "N/A",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": "N/A",
+                "rent_price_range": "N/A",
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "533",
+                "unit": "Private",
+                "base_rent": "$2,099",
+                "availability": "availibility\nNow",
+                "details_link": "kxvz4f9"
+            }
+        ],
+        "validation_status": "Success"
+    }
+]
