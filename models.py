@@ -11,7 +11,6 @@ class Users(SQLModel, table=True):
     email: str = Field(unique=True, nullable=False)
     created_at: str = Field(default_factory=lambda :datetime.now(timezone.utc), nullable=False)
 
-    listings: list["Listings"]= Relationship(back_populates="user")
 
 
 class Sources(SQLModel, table=True):
@@ -24,16 +23,12 @@ class Sources(SQLModel, table=True):
 class Listings(SQLModel, table=True):
     id: Optional[int]  = Field(default=None, primary_key=True)
     source_id: int = Field(foreign_key="sources.id", nullable=False)
-    users_id: int = Field(foreign_key="users.id", nullable= False)
     title: str = Field(nullable=False)
-    url: str = Field(nullable=False)
-    price: float = Field(nullable=False, index= True)
-    location: str = Field(nullable=True, index=True)
-    bedrooms: int = Field(nullable=True, index=True)
     created_at: str = Field(default_factory=lambda :datetime.now(timezone.utc), nullable=False)
+    description: str = Field(nullable=False)
+    price: float = Field(default=0.0, nullable=False)
 
-    source: Optional[Sources] = Relationship(back_populates="listings")
-    user: Optional[Users] = Relationship(back_populates="listings")
+    source: Optional["Sources"] = Relationship(back_populates="listings")
     pricing_history: list["Pricing_history"] = Relationship(back_populates="listing")
 
 class Pricing_history(SQLModel, table =True):
