@@ -3,10 +3,11 @@ import logging
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
 import os
-
+from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import SQLModel, create_engine, Session, select
 from dotenv import load_dotenv
+from sqlalchemy.orm import sessionmaker
 
 
 
@@ -26,17 +27,20 @@ if not DATABASE_URL:
 
 engine = create_engine(DATABASE_URL, echo=False)
 
+async_session_maker = sessionmaker(
+    engine, expire_on_commit=False, class_=AsyncSession
+)
+
+
+async def get_session() -> AsyncSession:
+    async with async_session_maker() as session:
+        yield session
+
+# --- Database Initialization ---
 async def create_db_and_tables():
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
 
-'''---open and close session function'''
-def getting_session():
-    with Session(engine) as session:
-        try:
-            yield session
-        finally:
-            session.close()
 
 
 # --- Helper Function for Parsing Scraped Numeric Values ---
@@ -70,15 +74,8 @@ def parse_numeric_value(text: Any) -> Optional[float]:
         return None  # Return None if conversion fails
 
 
-# --- Database Initialization ---
-def create_db_and_tables():
-    """
-    Creates all tables defined in your SQLModel metadata.
-    This should be called once to set up your database schema.
-    """
-    logging.info("Attempting to create database tables...")
-    SQLModel.metadata.create_all(engine)
-    logging.info("Database and tables created/verified successfully.")
+
+
 
 
 # --- Data Saving Function ---

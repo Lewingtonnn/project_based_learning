@@ -1,118 +1,151 @@
 [
     {
-        "title": "465 North Park",
-        "property_link": "https://www.apartments.com/465-north-park-chicago-il/jvgpwg7/",
-        "address": "465 N Park Dr, IL 60611",
-        "property_reviews": "4.9",
-        "listing_verification": "Verified Listing",
-        "lease_options": "N/A",
-        "year_built": "2018",
-        "street": "465 N Park Dr",
-        "city": "N/A",
-        "state": "IL",
-        "zip_code": "60611",
-        "property_type": "N/A",
-        "pricing_and_floor_plans": [
-            {
-                "apartment_name": "N/A",
-                "rent_price_range": "N/A",
-                "bedrooms": "0",
-                "bathrooms": "1",
-                "sqft": "678",
-                "unit": "3509",
-                "base_rent": "$3,205",
-                "availability": "availibility\nSep 21",
-                "details_link": "cmk4wkf"
-            }
-        ],
-        "validation_status": "Success"
-    },
-    {
-        "title": "Foundry",
-        "property_link": "https://www.apartments.com/foundry-chicago-il/0erlj02/",
-        "address": "1475 N Kingsbury St, IL 60642",
-        "property_reviews": "4.9",
+        "title": "Inspire West Town",
+        "property_link": "https://www.apartments.com/inspire-west-town-chicago-il/9sfj5n7/",
+        "address": "670 N May St, None, IL 60642",
+        "property_reviews": null,
         "listing_verification": "Verified Listing",
         "lease_options": [
-            "12 - 15 Month Leases"
+            "12 mo"
         ],
         "year_built": "2023",
-        "street": "1475 N Kingsbury St",
-        "city": "N/A",
+        "street": "670 N May St",
+        "city": null,
         "state": "IL",
         "zip_code": "60642",
         "property_type": "N/A",
         "pricing_and_floor_plans": [
             {
-                "apartment_name": "N/A",
-                "rent_price_range": "N/A",
+                "apartment_name": null,
+                "rent_price_range": null,
                 "bedrooms": "0",
                 "bathrooms": "1",
-                "sqft": "515",
-                "unit": "0513",
-                "base_rent": "$2,751",
-                "availability": "availibility\nNow",
-                "details_link": "lgtj72d"
+                "sqft": "419",
+                "unit": "707",
+                "base_rent": "$2,130",
+                "availability": "availibility\nOct 11",
+                "details_link": "1ht9fk4"
             }
         ],
         "validation_status": "Success"
     },
     {
-        "title": "Luxe Logan Square",
-        "property_link": "https://www.apartments.com/luxe-logan-square-chicago-il/hdy23k3/",
-        "address": "1950 N Campbell Ave, IL 60647",
+        "title": "Sentral Michigan Avenue",
+        "property_link": "https://www.apartments.com/sentral-michigan-avenue-chicago-il/begd58b/",
+        "address": "808 S Michigan Ave, None, IL 60605",
         "property_reviews": "4.8",
         "listing_verification": "Verified Listing",
         "lease_options": [
-            "3 - 15 Month Leases"
+            "Short term lease"
         ],
-        "year_built": "2017",
-        "street": "1950 N Campbell Ave",
-        "city": "N/A",
-        "state": "IL",
-        "zip_code": "60647",
-        "property_type": "N/A",
-        "pricing_and_floor_plans": [
-            {
-                "apartment_name": "N/A",
-                "rent_price_range": "N/A",
-                "bedrooms": "0",
-                "bathrooms": "1",
-                "sqft": "565",
-                "unit": "322S",
-                "base_rent": "$2,164",
-                "availability": "availibility\nSep 26",
-                "details_link": "cj2l3zd"
-            }
-        ],
-        "validation_status": "Success"
-    },
-    {
-        "title": "Straits Row",
-        "property_link": "https://www.apartments.com/straits-row-chicago-il/yv959ev/",
-        "address": "633 S La Salle St, IL 60605",
-        "property_reviews": "N/A",
-        "listing_verification": "Verified Listing",
-        "lease_options": [
-            "4 - 18 Month Leases"
-        ],
-        "year_built": "2025",
-        "street": "633 S La Salle St",
-        "city": "N/A",
+        "year_built": "2019",
+        "street": "808 S Michigan Ave",
+        "city": null,
         "state": "IL",
         "zip_code": "60605",
         "property_type": "N/A",
         "pricing_and_floor_plans": [
             {
-                "apartment_name": "N/A",
-                "rent_price_range": "N/A",
+                "apartment_name": null,
+                "rent_price_range": null,
                 "bedrooms": "0",
                 "bathrooms": "1",
-                "sqft": "533",
-                "unit": "Private",
-                "base_rent": "$2,099",
+                "sqft": "570",
+                "unit": "3704",
+                "base_rent": "$2,544",
                 "availability": "availibility\nNow",
-                "details_link": "kxvz4f9"
+                "details_link": "ch1s1cd"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "180 North Jefferson",
+        "property_link": "https://www.apartments.com/180-north-jefferson-chicago-il/ke04rvb/",
+        "address": "180 N Jefferson St, None, IL 60661",
+        "property_reviews": "4.8",
+        "listing_verification": "Verified Listing",
+        "lease_options": [
+            "12 - 14 Month Leases",
+            "Short term lease"
+        ],
+        "year_built": "2004",
+        "street": "180 N Jefferson St",
+        "city": null,
+        "state": "IL",
+        "zip_code": "60661",
+        "property_type": "N/A",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "640",
+                "unit": "1508",
+                "base_rent": "$2,395",
+                "availability": "availibility\nNow",
+                "details_link": "3r43c1f"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "Hubbard Place",
+        "property_link": "https://www.apartments.com/hubbard-place-chicago-il/820mn21/",
+        "address": "360 W Hubbard St, None, IL 60654",
+        "property_reviews": "5.0",
+        "listing_verification": "Verified Listing",
+        "lease_options": [
+            "12 - 13 Month Leases"
+        ],
+        "year_built": "2013",
+        "street": "360 W Hubbard St",
+        "city": null,
+        "state": "IL",
+        "zip_code": "60654",
+        "property_type": "N/A",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "480",
+                "unit": "01-3011",
+                "base_rent": "$2,215",
+                "availability": "availibility\nNow",
+                "details_link": "spdcjp4"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "Logan",
+        "property_link": "https://www.apartments.com/logan-chicago-il/q0yn6mw/",
+        "address": "2522 N Milwaukee Ave, None, IL 60647",
+        "property_reviews": "4.8",
+        "listing_verification": "Verified Listing",
+        "lease_options": [
+            "3 - 15 Month Leases"
+        ],
+        "year_built": "2019",
+        "street": "2522 N Milwaukee Ave",
+        "city": null,
+        "state": "IL",
+        "zip_code": "60647",
+        "property_type": "N/A",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "538",
+                "unit": "654",
+                "base_rent": "$1,997",
+                "availability": "availibility\nNow",
+                "details_link": "lc19qsd"
             }
         ],
         "validation_status": "Success"
