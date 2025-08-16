@@ -17,7 +17,9 @@ I’m committing small projects and code snippets every day to track my growth, 
 | Day 5 | Continuation of day 4 and Terraform| Learned how to write a terraform script to deploy my db, seeded my DB and wrote 10 SQL queries to test on the FastAPI endpoint
 | Day 6 |Playwright Scraping + Anti-Ban Tactics| Updated my skills on Playwright to the most recent knowledge and practices for Playwright async, built a scraper that will later feed our db implimenting rotating headers and practiced using rotating proxies|
 |Day 7 |Async + Retry Logic + Light DAG (Pipeline-Oriented Thinking)| Updated my code to run asynchronously, added retry logic using tenacity and added randomised delays to be more human like. Also compared the perfomance of running the scraper headless=True vs headless= False where i found the headless mode is 31.4584 seconds faster. Also upgraded the code to validate results so that in future when i connect it to my db itll be easier|
-| Day 8 | |  |
+| Day 8 |PostgreSQL Integration + SQLmodel + Terraform to RDS | applied what was learnt on day 4 to design my Schemas, implememnt the model classes, connect my scraper to my **postgresql database and debloyed my RDS to AWS using terraform script |
+|Day 9|FastAPI endpoints|Today was my restday and i only made my api endpoints while also practicing my SQL queries in both sql and python, learned how to use selectinload and other advanced things that i didnt cover on day 3|
+|Day 10|...
 ---
 
 ## 📌 Purpose
