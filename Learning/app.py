@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Depends
-from sqlmodel import Session, select, func
+from sqlmodel import Session, select
 
 
 from database import get_session,create_db_and_tables
@@ -80,3 +80,4 @@ def get_this_weeks_listings(session: Session = Depends(get_session)):
     statement = select(Listings).where(Listings.created_at >= one_week_ago)
     listings = session.exec(statement).all()
     return listings
+
