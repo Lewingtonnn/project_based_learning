@@ -77,39 +77,74 @@ async def goto_with_retry(page: Page, url: str, timeout: int = 60000):
 
 # --- Scraper Functions ---
 
-async def scrape_main_page(page: Page, main_url: str) -> list[str]:
+import logging
+from playwright.async_api import Page, TimeoutError
+
+
+async def scrape_all_pages(page: Page, main_url: str) -> list[str]:
     """
-    Navigates to the main page, extracts all property links, and returns them.
-    Includes retry logic for navigation and random delays.
+    Navigates through all available pages, extracts all property links, and returns them.
+    Includes robust retry logic, random delays, and handles pagination until no more pages are found.
     Ensures unique URLs are returned.
     """
-    logging.info(f"Navigating to the main page: {main_url}")
+    logging.info(f"Starting multi-page scraping from: {main_url}")
+    property_urls_set = set()
+    current_page_number = 1
+
     try:
-        await goto_with_retry(page, main_url)
-        # Waiting for a more specific element related to property listings
-        await page.wait_for_selector('a.property-link', timeout=30000)
-        await add_random_delay(1, 3)  # Short delay after initial page load
+        # Step 1: Navigate to the initial page.
+        await page.goto(main_url, wait_until='domcontentloaded', timeout=60000)
 
-        property_links_locators = page.locator('a.property-link')
-        count = await property_links_locators.count()
-        logging.info(f"Found {count} potential property links on the main page.")
+        while True:
+            logging.info(f"Scraping page {current_page_number}...")
 
-        property_urls_set = set()  # Use a set to automatically handle uniqueness
-        for i in range(count):
-            href = await property_links_locators.nth(i).get_attribute('href')
-            if href:
-                # Ensure URLs are absolute
-                if not href.startswith('http'):
-                    href = main_url.rstrip('/') + '/' + href.lstrip('/')
-                property_urls_set.add(href)  # Add to set
+            # Step 2: Wait for content to load on the current page.
+            # Adjust this selector to what is specific to the property listings.
+            try:
+                await page.wait_for_selector('a.property-link', timeout=30000)
+            except TimeoutError:
+                logging.warning(f"No property links found on page {current_page_number}, ending pagination.")
+                break
 
-        property_urls = list(property_urls_set)  # Convert back to list
-        logging.info(f"Extracted {len(property_urls)} unique property URLs.")
-        return property_urls
+            # Add a random delay to mimic human behavior and avoid bot detection.
+            await page.wait_for_timeout(1000)
+
+            # Step 3: Extract links from the current page.
+            property_links_locators = page.locator('a.property-link')
+            count = await property_links_locators.count()
+            logging.info(f"Found {count} potential property links on page {current_page_number}.")
+
+            for i in range(count):
+                href = await property_links_locators.nth(i).get_attribute('href')
+                if href:
+                    # Ensure URLs are absolute.
+                    if not href.startswith('http'):
+                        href = page.url.rstrip('/') + '/' + href.lstrip('/')
+                    property_urls_set.add(href)
+
+            # Step 4: Check for the "next page" button and break the loop if it's not found.
+            # CRITICAL: Inspect the target website's HTML to find the correct selector for the "next page" button.
+            # Common selectors include: 'a.pagination-next', 'a[rel="next"]', 'li.next a', etc.
+            next_page_button = page.locator('a[aria-label="Next Page"]')
+
+            if not await next_page_button.is_visible() or await next_page_button.is_disabled():
+                logging.info("No more pages found. Ending pagination.")
+                break
+
+            # Step 5: Click the "next page" button and wait for the new page to load.
+            logging.info("Clicking the 'next' page button...")
+            await next_page_button.click()
+            await page.wait_for_url(lambda url: f'page={current_page_number + 1}' in url or '?' in url, timeout=30000)
+
+            current_page_number += 1
+            await page.wait_for_timeout(1000)  # Small delay between clicks.
+
     except Exception as e:
-        logging.error(f"Error scraping main page {main_url} after retries: {e}")
-        return []
+        logging.error(f"Error during multi-page scraping: {e}")
 
+    property_urls = list(property_urls_set)
+    logging.info(f"Scraping complete. Extracted {len(property_urls)} unique property URLs.")
+    return property_urls
 
 async def scrape_apartment_page(page: Page, url: str) -> dict:
     """
@@ -294,7 +329,7 @@ async def main():
         async with async_playwright() as p:
             # Launch Firefox, with anti-detection arguments
             browser = await p.firefox.launch(
-                headless=True,  # Set to True for production, False for debugging
+                headless=False,  # Set to True for production, False for debugging
                 args=["--disable-http2", "--disable-features=AutomationControlled", "--disable-web-security"]
             )
             # Create a new context with a random User-Agent for this session
@@ -303,7 +338,7 @@ async def main():
             # Use a page from the context for the main page scraping
             main_page_instance = await context.new_page()
             main_url = 'https://www.apartments.com/chicago-il/'
-            property_urls = await scrape_main_page(main_page_instance, main_url)
+            property_urls = await scrape_all_pages(main_page_instance, main_url)
             await main_page_instance.close()  # Close main page instance as it's not needed for detail scrapes
 
             # Limit the number of properties to scrape for faster testing/development
@@ -380,7 +415,7 @@ async def run_scraper_mode(headless_mode: bool, p_instance):
     page = await context.new_page()
 
     main_url = 'https://www.apartments.com/chicago-il/'
-    property_urls = await scrape_main_page(page, main_url)
+    property_urls = await scrape_all_pages(page, main_url)
 
     # Limit properties for comparison run to keep it manageable and fast
     comparison_limit = min(len(property_urls), 5)  # Still 5 properties for comparison
@@ -431,3 +466,5 @@ if __name__ == '__main__':
     scraped_data_output = asyncio.run(main())
     logging.info(f"\nFinal Scraped Data Summary: Collected {len(scraped_data_output)} successful property entries.")
     #asyncio.run(compare_performance())
+    from db_ops import save_scraped_data_to_db
+    #asyncio.run(save_scraped_data_to_db(scraped_data_output))
