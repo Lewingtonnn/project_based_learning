@@ -26,6 +26,10 @@ if not DATABASE_URL:
 
 engine = create_engine(DATABASE_URL, echo=False)
 
+async def create_db_and_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)
+
 '''---open and close session function'''
 def getting_session():
     with Session(engine) as session:
@@ -270,5 +274,5 @@ if __name__ == '__main__':
             ]
         }
     ]
-    # save_scraped_data_to_db(dummy_scraped_data)
+    save_scraped_data_to_db(dummy_scraped_data)
     logging.info("Database operations script finished.")
