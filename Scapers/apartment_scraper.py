@@ -41,10 +41,11 @@ async def safe_inner_text(locator) -> str:
     """Safely gets inner text from a locator, returns 'N/A' on failure."""
     try:
         if await locator.count() > 0:
-            return (await locator.inner_text()).strip()
+            text=(await locator.inner_text()).strip()
+            return text if text else None
     except Exception as e:
         logging.debug(f"Could not get inner_text: {e}")  # Use debug for non-critical failures
-    return "N/A"
+    return None
 
 
 async def safe_get_attribute(locator, attribute: str) -> str:
@@ -52,10 +53,10 @@ async def safe_get_attribute(locator, attribute: str) -> str:
     try:
         if await locator.count() > 0:
             attr_value = await locator.get_attribute(attribute)
-            return attr_value.strip() if attr_value else "N/A"
+            return attr_value.strip() if attr_value else None
     except Exception as e:
         logging.debug(f"Could not get attribute '{attribute}': {e}")
-    return "N/A"
+    return None
 
 
 # --- Retry Strategy for Page Navigation ---
@@ -121,7 +122,7 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
         'title': 'N/A',
         'property_link': url,
         'address': 'N/A',
-        'property_reviews': 'N/A',
+        'property_reviews': '0',  # Default to '0' if no reviews found
         'listing_verification': 'N/A',
         'lease_options': 'N/A',
         'year_built': 'N/A',
@@ -306,8 +307,7 @@ async def main():
             await main_page_instance.close()  # Close main page instance as it's not needed for detail scrapes
 
             # Limit the number of properties to scrape for faster testing/development
-            # IMPORTANT: Ensure this limit results in DIFFERENT URLs if property_urls has enough distinct entries.
-            # Example: property_urls[:5] will take the first 5 unique URLs.
+
             properties_to_scrape_limit = 5  # Set to 5 as a reasonable test sample
             limited_property_urls = property_urls[:properties_to_scrape_limit]
 
@@ -428,6 +428,6 @@ async def compare_performance():
 
 # --- Main Execution Block ---
 if __name__ == '__main__':
-    #scraped_data_output = asyncio.run(main())
-    #logging.info(f"\nFinal Scraped Data Summary: Collected {len(scraped_data_output)} successful property entries.")
-    asyncio.run(compare_performance())
+    scraped_data_output = asyncio.run(main())
+    logging.info(f"\nFinal Scraped Data Summary: Collected {len(scraped_data_output)} successful property entries.")
+    #asyncio.run(compare_performance())

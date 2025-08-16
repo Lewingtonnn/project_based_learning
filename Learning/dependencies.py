@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import FastAPI, Query, Depends, Header, HTTPException, BackgroundTasks
+from fastapi import FastAPI, Depends, Header, HTTPException, BackgroundTasks
 from pydantic import BaseModel, Field
 
 
@@ -11,7 +11,7 @@ class Note(BaseModel):
     note:str=Field(..., description="The note")
     Author:str=Field(default=author, description="The Author of the note")
 
-class noteId(Note):
+class NoteId(Note):
     noteId:int=Field(..., description="The ID of the note")
 
 notes=[
@@ -21,7 +21,7 @@ notes=[
     {"noteId":4,"note_title":"fourth title","note":"This is the fourth note in our list","Author":"John"}
 ]
 
-class Authorisation():
+class Authorisation:
         def __call__(self, x_token:Annotated[str, Header()]) ->str:
             if x_token != "lewis":
                 raise HTTPException(status_code=403, detail="Invalid token")
@@ -34,7 +34,7 @@ def background_tasks_function(note_title:str):
 @app.post("/notes/")
 async def create_note(note:Note, x_token:Annotated[str,Depends(Authorisation())], background_task:BackgroundTasks):
     noteId = len(notes) + 1
-    new_note = note.dict()
+    new_note = note.model_dump()
     new_note["noteId"] = noteId
     notes.append(new_note)
     background_task.add_task(background_tasks_function, note_title=note.note_title)
