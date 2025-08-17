@@ -1,151 +1,730 @@
 [
     {
-        "title": "Inspire West Town",
-        "property_link": "https://www.apartments.com/inspire-west-town-chicago-il/9sfj5n7/",
-        "address": "670 N May St, None, IL 60642",
-        "property_reviews": null,
+        "title": "The Residences at NewCity",
+        "property_link": "https://www.apartments.com/the-residences-at-newcity-chicago-il/wg6wcxl/",
+        "address": "1457 N Halsted St, None, IL 60642",
+        "property_reviews": "4.9",
         "listing_verification": "Verified Listing",
         "lease_options": [
-            "12 mo"
+            "6 - 13 Month Leases"
         ],
-        "year_built": "2023",
-        "street": "670 N May St",
+        "year_built": "2015",
+        "street": "1457 N Halsted St",
         "city": null,
         "state": "IL",
         "zip_code": "60642",
-        "property_type": "N/A",
+        "property_type": "Apartment",
         "pricing_and_floor_plans": [
             {
                 "apartment_name": null,
                 "rent_price_range": null,
-                "bedrooms": "0",
+                "bedrooms": "1",
                 "bathrooms": "1",
-                "sqft": "419",
-                "unit": "707",
-                "base_rent": "$2,130",
-                "availability": "availibility\nOct 11",
-                "details_link": "1ht9fk4"
+                "sqft": "700",
+                "unit": "1809",
+                "base_rent": "$3,029",
+                "availability": "availibility\nNow",
+                "details_link": "gme0fvz"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "800",
+                "unit": "1705",
+                "base_rent": "$3,460",
+                "availability": "availibility\nNow",
+                "details_link": "fppy0ls"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "800",
+                "unit": "1105",
+                "base_rent": "$3,160",
+                "availability": "availibility\nSep 1",
+                "details_link": "yyq39bt"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "735",
+                "unit": "1806",
+                "base_rent": "$3,235",
+                "availability": "availibility\nNow",
+                "details_link": "mme3w8h"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "935",
+                "unit": "0603",
+                "base_rent": "$3,643",
+                "availability": "availibility\nNow",
+                "details_link": "wslqf2h"
             }
         ],
         "validation_status": "Success"
     },
     {
-        "title": "Sentral Michigan Avenue",
-        "property_link": "https://www.apartments.com/sentral-michigan-avenue-chicago-il/begd58b/",
-        "address": "808 S Michigan Ave, None, IL 60605",
-        "property_reviews": "4.8",
+        "title": "5252",
+        "property_link": "https://www.apartments.com/5252-chicago-il/26eg83c/",
+        "address": "5252 S Cornell Ave, None, IL 60615",
+        "property_reviews": "4.9",
         "listing_verification": "Verified Listing",
         "lease_options": [
             "Short term lease"
         ],
         "year_built": "2019",
-        "street": "808 S Michigan Ave",
+        "street": "5252 S Cornell Ave",
         "city": null,
         "state": "IL",
-        "zip_code": "60605",
-        "property_type": "N/A",
+        "zip_code": "60615",
+        "property_type": "Apartment",
         "pricing_and_floor_plans": [
             {
                 "apartment_name": null,
                 "rent_price_range": null,
                 "bedrooms": "0",
                 "bathrooms": "1",
-                "sqft": "570",
-                "unit": "3704",
-                "base_rent": "$2,544",
+                "sqft": "572",
+                "unit": "2401",
+                "base_rent": "$2,695",
                 "availability": "availibility\nNow",
-                "details_link": "ch1s1cd"
-            }
-        ],
-        "validation_status": "Success"
-    },
-    {
-        "title": "180 North Jefferson",
-        "property_link": "https://www.apartments.com/180-north-jefferson-chicago-il/ke04rvb/",
-        "address": "180 N Jefferson St, None, IL 60661",
-        "property_reviews": "4.8",
-        "listing_verification": "Verified Listing",
-        "lease_options": [
-            "12 - 14 Month Leases",
-            "Short term lease"
-        ],
-        "year_built": "2004",
-        "street": "180 N Jefferson St",
-        "city": null,
-        "state": "IL",
-        "zip_code": "60661",
-        "property_type": "N/A",
-        "pricing_and_floor_plans": [
+                "details_link": "t5z6kq8"
+            },
             {
                 "apartment_name": null,
                 "rent_price_range": null,
-                "bedrooms": "0",
+                "bedrooms": "1",
                 "bathrooms": "1",
-                "sqft": "640",
-                "unit": "1508",
-                "base_rent": "$2,395",
+                "sqft": "654",
+                "unit": "1505",
+                "base_rent": "$2,975",
                 "availability": "availibility\nNow",
-                "details_link": "3r43c1f"
-            }
-        ],
-        "validation_status": "Success"
-    },
-    {
-        "title": "Hubbard Place",
-        "property_link": "https://www.apartments.com/hubbard-place-chicago-il/820mn21/",
-        "address": "360 W Hubbard St, None, IL 60654",
-        "property_reviews": "5.0",
-        "listing_verification": "Verified Listing",
-        "lease_options": [
-            "12 - 13 Month Leases"
-        ],
-        "year_built": "2013",
-        "street": "360 W Hubbard St",
-        "city": null,
-        "state": "IL",
-        "zip_code": "60654",
-        "property_type": "N/A",
-        "pricing_and_floor_plans": [
+                "details_link": "ehbcg7n"
+            },
             {
                 "apartment_name": null,
                 "rent_price_range": null,
-                "bedrooms": "0",
+                "bedrooms": "1",
                 "bathrooms": "1",
-                "sqft": "480",
-                "unit": "01-3011",
-                "base_rent": "$2,215",
+                "sqft": "654",
+                "unit": "2105",
+                "base_rent": "$3,050",
                 "availability": "availibility\nNow",
-                "details_link": "spdcjp4"
+                "details_link": "s1dzfh5"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "654",
+                "unit": "1605",
+                "base_rent": "$3,000",
+                "availability": "availibility\nAug 19",
+                "details_link": "t4v6lg8"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "654",
+                "unit": "1705",
+                "base_rent": "$3,010",
+                "availability": "availibility \n                                            Aug 22",
+                "details_link": "gv69wfw"
             }
         ],
         "validation_status": "Success"
     },
     {
-        "title": "Logan",
-        "property_link": "https://www.apartments.com/logan-chicago-il/q0yn6mw/",
-        "address": "2522 N Milwaukee Ave, None, IL 60647",
+        "title": "Luxe Logan Square",
+        "property_link": "https://www.apartments.com/luxe-logan-square-chicago-il/hdy23k3/",
+        "address": "1950 N Campbell Ave, None, IL 60647",
         "property_reviews": "4.8",
         "listing_verification": "Verified Listing",
         "lease_options": [
             "3 - 15 Month Leases"
         ],
-        "year_built": "2019",
-        "street": "2522 N Milwaukee Ave",
+        "year_built": "2017",
+        "street": "1950 N Campbell Ave",
         "city": null,
         "state": "IL",
         "zip_code": "60647",
-        "property_type": "N/A",
+        "property_type": "Apartment",
         "pricing_and_floor_plans": [
             {
                 "apartment_name": null,
                 "rent_price_range": null,
                 "bedrooms": "0",
                 "bathrooms": "1",
-                "sqft": "538",
-                "unit": "654",
-                "base_rent": "$1,997",
+                "sqft": "565",
+                "unit": "322S",
+                "base_rent": "$2,164",
+                "availability": "availibility\nSep 26",
+                "details_link": "cj2l3zd"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "608",
+                "unit": "216S",
+                "base_rent": "$2,441",
+                "availability": "availibility\nSep 24",
+                "details_link": "x6p91sp"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "746",
+                "unit": "219S",
+                "base_rent": "$2,561",
+                "availability": "availibility\nOct 4",
+                "details_link": "vsn5cnf"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "2",
+                "bathrooms": "1",
+                "sqft": "890",
+                "unit": "212N",
+                "base_rent": "$1,529",
+                "availability": "availibility\nSep 1",
+                "details_link": "eh7xcqq"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "2",
+                "bathrooms": "2",
+                "sqft": "928",
+                "unit": "206N",
+                "base_rent": "$3,305",
+                "availability": "availibility\nSep 8",
+                "details_link": "1pbxph7"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "Straits Row",
+        "property_link": "https://www.apartments.com/straits-row-chicago-il/yv959ev/",
+        "address": "633 S La Salle St, None, IL 60605",
+        "property_reviews": null,
+        "listing_verification": "Verified Listing",
+        "lease_options": [
+            "4 - 18 Month Leases"
+        ],
+        "year_built": "2025",
+        "street": "633 S La Salle St",
+        "city": null,
+        "state": "IL",
+        "zip_code": "60605",
+        "property_type": "Apartment",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "533",
+                "unit": "Private",
+                "base_rent": "$2,099",
                 "availability": "availibility\nNow",
-                "details_link": "lc19qsd"
+                "details_link": "kxvz4f9"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "533",
+                "unit": "Private",
+                "base_rent": "$2,099",
+                "availability": "availibility\nNow",
+                "details_link": "m4zsnmj"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "533",
+                "unit": "Private",
+                "base_rent": "$2,099",
+                "availability": "availibility\nNow",
+                "details_link": "e516rxm"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "533",
+                "unit": "Private",
+                "base_rent": "$2,099",
+                "availability": "availibility \n                                            Now",
+                "details_link": "xck7p8p"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "533",
+                "unit": "Private",
+                "base_rent": "$2,099",
+                "availability": "availibility \n                                            Now",
+                "details_link": "h1jhr91"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "SKY55",
+        "property_link": "https://www.apartments.com/sky55-chicago-il/dgcew7k/",
+        "address": "1255 S Michigan Ave, None, IL 60605",
+        "property_reviews": "4.7",
+        "listing_verification": "Verified Listing",
+        "lease_options": [
+            "12"
+        ],
+        "year_built": "2007",
+        "street": "1255 S Michigan Ave",
+        "city": null,
+        "state": "IL",
+        "zip_code": "60605",
+        "property_type": "Apartment",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "893",
+                "unit": "00-0908",
+                "base_rent": "$2,854",
+                "availability": "availibility\nNow",
+                "details_link": "05pv471"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "769",
+                "unit": "00-PH09",
+                "base_rent": "$3,289",
+                "availability": "availibility\nNow",
+                "details_link": "9d8rlv5"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "769",
+                "unit": "00-PH18",
+                "base_rent": "$3,299",
+                "availability": "availibility\nNow",
+                "details_link": "nghzsrm"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1.5",
+                "sqft": "1,114",
+                "unit": "00-3205",
+                "base_rent": "$3,404",
+                "availability": "availibility\nNow",
+                "details_link": "64cff4s"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "979",
+                "unit": "00-1903",
+                "base_rent": "$2,989",
+                "availability": "availibility\nAug 18",
+                "details_link": "2s22z89"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "Sheffield of Lincoln Park",
+        "property_link": "https://www.apartments.com/sheffield-of-lincoln-park-chicago-il/l9jzwfd/",
+        "address": "2700 N Sheffield Ave, None, IL 60614",
+        "property_reviews": "4.9",
+        "listing_verification": null,
+        "lease_options": [
+            "1 year"
+        ],
+        "year_built": "2023",
+        "street": "2700 N Sheffield Ave",
+        "city": null,
+        "state": "IL",
+        "zip_code": "60614",
+        "property_type": "Apartment",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "2",
+                "bathrooms": "1",
+                "sqft": "901",
+                "unit": "410",
+                "base_rent": "$2,550",
+                "availability": "availibility\nSep 15",
+                "details_link": "8dffxv3"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "2",
+                "bathrooms": "2",
+                "sqft": "900",
+                "unit": "512",
+                "base_rent": "$2,750",
+                "availability": "availibility\nSep 15",
+                "details_link": "ep5jqfm"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "2",
+                "bathrooms": "1",
+                "sqft": "901",
+                "unit": "410",
+                "base_rent": "$2,550",
+                "availability": "availibility \n                                            Sep 15",
+                "details_link": "8dffxv3"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "2",
+                "bathrooms": "2",
+                "sqft": "900",
+                "unit": "512",
+                "base_rent": "$2,750",
+                "availability": "availibility \n                                            Sep 15",
+                "details_link": "ep5jqfm"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "Algonquin Apartments",
+        "property_link": "https://www.apartments.com/algonquin-apartments-chicago-il/jbww9e6/",
+        "address": "1606 E Hyde Park Blvd, None, IL 60615",
+        "property_reviews": "4.9",
+        "listing_verification": "Verified Listing",
+        "lease_options": [
+            "3 months, 4 months, 5 months, 6 months, 7 months, 8 months, 9 months, 11 months, 12 months, 13 months, 14 months, 15 months, 17 months",
+            "Short term lease"
+        ],
+        "year_built": "1953",
+        "street": "1606 E Hyde Park Blvd",
+        "city": null,
+        "state": "IL",
+        "zip_code": "60615",
+        "property_type": "Apartment",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "400",
+                "unit": "01-014A",
+                "base_rent": "$1,495",
+                "availability": "availibility\nSep 19",
+                "details_link": "z1es2qz"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "650",
+                "unit": "03-009B",
+                "base_rent": "$1,745",
+                "availability": "availibility\nNow",
+                "details_link": "rcn6ek0"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "650",
+                "unit": "03-006C",
+                "base_rent": "$1,720",
+                "availability": "availibility\nAug 29",
+                "details_link": "txes9k8"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "650",
+                "unit": "03-014C",
+                "base_rent": "$1,730",
+                "availability": "availibility\nSep 5",
+                "details_link": "x4d5m1q"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "650",
+                "unit": "03-002B",
+                "base_rent": "$1,705",
+                "availability": "availibility \n                                            Sep 12",
+                "details_link": "fjrl75v"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "Noca Blu Apartment Homes",
+        "property_link": "https://www.apartments.com/noca-blu-apartment-homes-chicago-il/ete7bvp/",
+        "address": "2340 N California Ave, None, IL 60647",
+        "property_reviews": "4.8",
+        "listing_verification": "Verified Listing",
+        "lease_options": [
+            "6 - 15 Month Leases",
+            "Short term lease"
+        ],
+        "year_built": "2018",
+        "street": "2340 N California Ave",
+        "city": null,
+        "state": "IL",
+        "zip_code": "60647",
+        "property_type": "Apartment",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "486",
+                "unit": "505",
+                "base_rent": "$2,070",
+                "availability": "availibility\nNow",
+                "details_link": "28z4j6c"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "471",
+                "unit": "203",
+                "base_rent": "$2,070",
+                "availability": "availibility\nNow",
+                "details_link": "nmr3c9n"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "471",
+                "unit": "310",
+                "base_rent": "$2,070",
+                "availability": "availibility\nNow",
+                "details_link": "rcqz600"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "471",
+                "unit": "602",
+                "base_rent": "$2,070",
+                "availability": "availibility \n                                            Now",
+                "details_link": "734qg9y"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "486",
+                "unit": "411",
+                "base_rent": "$2,090",
+                "availability": "availibility \n                                            Aug 18",
+                "details_link": "007dkw1"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "Two West Delaware",
+        "property_link": "https://www.apartments.com/two-west-delaware-chicago-il/jqn1nf6/",
+        "address": "2 W Delaware Pl, None, IL 60610",
+        "property_reviews": "4.8",
+        "listing_verification": "Verified Listing",
+        "lease_options": "N/A",
+        "year_built": "2010",
+        "street": "2 W Delaware Pl",
+        "city": null,
+        "state": "IL",
+        "zip_code": "60610",
+        "property_type": "Apartment",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1",
+                "sqft": "920",
+                "unit": "0905",
+                "base_rent": "$4,599",
+                "availability": "availibility\nNow",
+                "details_link": "s6qr8d4"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "1",
+                "bathrooms": "1.5",
+                "sqft": "945",
+                "unit": "1904",
+                "base_rent": "$4,651",
+                "availability": "availibility\nSep 23",
+                "details_link": "enqcb8p"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "2",
+                "bathrooms": "2",
+                "sqft": "1,280",
+                "unit": "1903",
+                "base_rent": "$6,700",
+                "availability": "availibility\nSep 1",
+                "details_link": "rep4210"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "2",
+                "bathrooms": "2.5",
+                "sqft": "1,520",
+                "unit": "1907",
+                "base_rent": "$6,945",
+                "availability": "availibility\nOct 7",
+                "details_link": "0gdbec3"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "3",
+                "bathrooms": "3",
+                "sqft": "1,920",
+                "unit": "2601",
+                "base_rent": "$9,420",
+                "availability": "availibility\nNow",
+                "details_link": "fymd1ws"
+            }
+        ],
+        "validation_status": "Success"
+    },
+    {
+        "title": "Arrive Streeterville",
+        "property_link": "https://www.apartments.com/arrive-streeterville-chicago-il/90fhlb7/",
+        "address": "333 E Ontario St, None, IL 60611",
+        "property_reviews": "4.4",
+        "listing_verification": "Verified Listing",
+        "lease_options": [
+            "2 - 15 Month Leases",
+            "Short term lease"
+        ],
+        "year_built": "1972",
+        "street": "333 E Ontario St",
+        "city": null,
+        "state": "IL",
+        "zip_code": "60611",
+        "property_type": "Apartment",
+        "pricing_and_floor_plans": [
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "603",
+                "unit": "1-3504",
+                "base_rent": "$2,530",
+                "availability": "availibility\nNow",
+                "details_link": "kb2p2k9"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "603",
+                "unit": "2-4504",
+                "base_rent": "$2,560",
+                "availability": "availibility\nSep 6",
+                "details_link": "7gdmjxx"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "603",
+                "unit": "2-3804",
+                "base_rent": "$2,415",
+                "availability": "availibility\nSep 23",
+                "details_link": "szye234"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "603",
+                "unit": "1-2004",
+                "base_rent": "$2,315",
+                "availability": "availibility \n                                            Sep 27",
+                "details_link": "5j44zfm"
+            },
+            {
+                "apartment_name": null,
+                "rent_price_range": null,
+                "bedrooms": "0",
+                "bathrooms": "1",
+                "sqft": "603",
+                "unit": "1-3304",
+                "base_rent": "$2,150",
+                "availability": "availibility \n                                            Oct 8",
+                "details_link": "xrjqmqq"
             }
         ],
         "validation_status": "Success"
