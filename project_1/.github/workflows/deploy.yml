@@ -1,3 +1,31 @@
-FROM python: 3.10-slim-buster
-WORKDIR /db_app
+name: CI/CD Pipeline
 
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: pytest
+
+    - name: Build Docker image
+      run: docker build . --file Dockerfile --https://github.com/Lewingtonnn/project_based_learning:$(echo $GITHUB_SHA | cut -c1-8)

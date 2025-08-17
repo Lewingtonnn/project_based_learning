@@ -99,7 +99,7 @@ async def scrape_all_pages(page: Page, main_url: str) -> list[str]:
             logging.info(f"Scraping page {current_page_number}...")
 
             # Step 2: Wait for content to load on the current page.
-            # Adjust this selector to what is specific to the property listings.
+
             try:
                 await page.wait_for_selector('a.property-link', timeout=30000)
             except TimeoutError:
@@ -125,7 +125,7 @@ async def scrape_all_pages(page: Page, main_url: str) -> list[str]:
             # Step 4: Check for the "next page" button and break the loop if it's not found.
             # CRITICAL: Inspect the target website's HTML to find the correct selector for the "next page" button.
             # Common selectors include: 'a.pagination-next', 'a[rel="next"]', 'li.next a', etc.
-            next_page_button = page.locator('a[aria-label="Next Page"]')
+            next_page_button = page.locator('a.next')
 
             if not await next_page_button.is_visible() or await next_page_button.is_disabled():
                 logging.info("No more pages found. Ending pagination.")
@@ -134,7 +134,8 @@ async def scrape_all_pages(page: Page, main_url: str) -> list[str]:
             # Step 5: Click the "next page" button and wait for the new page to load.
             logging.info("Clicking the 'next' page button...")
             await next_page_button.click()
-            await page.wait_for_url(lambda url: f'page={current_page_number + 1}' in url or '?' in url, timeout=30000)
+            logging.info("button found and clicked")
+            await page.wait_for_selector('a.property-link')
 
             current_page_number += 1
             await page.wait_for_timeout(1000)  # Small delay between clicks.
@@ -165,7 +166,7 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
         'city': 'N/A',
         'state': 'N/A',
         'zip_code': 'N/A',
-        'property_type': 'N/A',  # Added for consistency
+        'property_type': "Apartment",  # Added for consistency
         'pricing_and_floor_plans': []  # This will be a list of dictionaries for each floor plan
     }
 
@@ -178,7 +179,7 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
         'city_span': 'span.address-city',
         'state_zip_container': '.stateZipContainer',  # Specific state/zip container
         'property_reviews': '.reviewRating',
-        'listing_verification': 'span.verifedText',  # Corrected typo 'verifedText'
+        'listing_verification': 'span.verifedText',  # its verifed and not verified the correct spelling
         'lease_options_container': '.feesPoliciesCard:has-text("Lease Options")',
         'year_built_container': '.feesPoliciesCard:has-text("Property Information") .component-list .column:has-text("Built in")',
         'unit_cards': 'li.unitContainer',
@@ -255,12 +256,12 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
 
         # Limit floor plans to a manageable number (e.g., 5) for efficiency and anti-bot.
         # Adjust '5' to any number you need. For testing, starting with 1 or 2 is good.
-        limit_floor_plans = min(unit_cards_count, 1)
+        limit_floor_plans = min(unit_cards_count, 5)
 
         for i in range(limit_floor_plans):
             unit_card = unit_cards_locators.nth(i)
             unit_pricing_data = {
-                'apartment_name': 'N/A', 'rent_price_range': 'N/A', 'bedrooms': 'N/A',
+                'apartment_name':"N/A", 'rent_price_range': 'N/A', 'bedrooms': 'N/A',
                 'bathrooms': 'N/A', 'sqft': 'N/A', 'unit': 'N/A',
                 'base_rent': 'N/A', 'availability': 'N/A', 'details_link': 'N/A'
             }
@@ -329,7 +330,7 @@ async def main():
         async with async_playwright() as p:
             # Launch Firefox, with anti-detection arguments
             browser = await p.firefox.launch(
-                headless=False,  # Set to True for production, False for debugging
+                headless=True,  # Set to True for production, False for debugging
                 args=["--disable-http2", "--disable-features=AutomationControlled", "--disable-web-security"]
             )
             # Create a new context with a random User-Agent for this session
@@ -343,14 +344,14 @@ async def main():
 
             # Limit the number of properties to scrape for faster testing/development
 
-            properties_to_scrape_limit = 5  # Set to 5 as a reasonable test sample
+            properties_to_scrape_limit = 10  # Set to 5 as a reasonable test sample
             limited_property_urls = property_urls[:properties_to_scrape_limit]
 
             logging.info(
                 f"Found {len(property_urls)} properties on main page. Proceeding to scrape {len(limited_property_urls)} properties for detail.")
 
             # Use a semaphore to control concurrency
-            max_concurrent_pages = 3  # Reduced concurrency to 3 to be less aggressive. Adjust as needed.
+            max_concurrent_pages = 5  # Reduced concurrency to 3 to be less aggressive. Adjust as needed.
             semaphore = asyncio.Semaphore(max_concurrent_pages)
 
             tasks = []
@@ -451,6 +452,7 @@ async def compare_performance():
 
         logging.info("--- Running in HEADED mode ---")
         headed_time, headed_count = await run_scraper_mode(False, p)  # Set headless=False
+
         logging.info(
             f"Headed mode finished in {headed_time:.2f} seconds, scraped {headed_count} properties successfully.")
 
@@ -467,4 +469,4 @@ if __name__ == '__main__':
     logging.info(f"\nFinal Scraped Data Summary: Collected {len(scraped_data_output)} successful property entries.")
     #asyncio.run(compare_performance())
     from db_ops import save_scraped_data_to_db
-    #asyncio.run(save_scraped_data_to_db(scraped_data_output))
+    asyncio.run(save_scraped_data_to_db(scraped_data_output))
