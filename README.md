@@ -4,6 +4,8 @@ This repository documents my daily progress and learning from a backend-focused 
 
 I’m committing small projects and code snippets every day to track my growth, keep myself accountable, and build a public learning record.
 
+Also one day in this bootcamp doesnt represent the literal 24 hours day, it represents milestones, some days took longer to complete others upto three typical days while others took me around 6-8 hrs to complete
+
 ---
 
 ## 📅 Daily Progress
