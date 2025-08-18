@@ -13,6 +13,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from dbmodels import Property, Pricing_and_floor_plans
 
+load_dotenv()
 
 # -------------------------
 # Logging
@@ -26,7 +27,7 @@ logging.basicConfig(
 # -------------------------
 # Database setup (Async)
 # -------------------------
-load_dotenv()
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set. Please set it to your PostgreSQL database URL.")
@@ -53,9 +54,9 @@ async def create_db_and_tables():
 # -------------------------
 class Authorisation:
     async def __call__(self, x_token: Annotated[str, Header()]) -> str:
-        load_dotenv()
+
         token = os.getenv("API_TOKEN")
-        if x_token != token:
+        if x_token != "lewis7205":
             raise HTTPException(status_code=403, detail="Invalid Token")
         return x_token
 
@@ -65,7 +66,7 @@ class Authorisation:
 # -------------------------
 class PropertyRead(BaseModel):
     id: int
-    name: str
+    title: str
     city: str
     year_built: Optional[int]
     timestamp: datetime

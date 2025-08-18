@@ -467,6 +467,6 @@ async def compare_performance():
 if __name__ == '__main__':
     scraped_data_output = asyncio.run(main())
     logging.info(f"\nFinal Scraped Data Summary: Collected {len(scraped_data_output)} successful property entries.")
-    #asyncio.run(compare_performance())
+    asyncio.run(compare_performance())
     from db_ops import save_scraped_data_to_db
     asyncio.run(save_scraped_data_to_db(scraped_data_output))
