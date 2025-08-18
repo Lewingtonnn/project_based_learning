@@ -21,7 +21,7 @@ Also one day in this bootcamp doesnt represent the literal 24 hours day, it repr
 |Day 7 |Async + Retry Logic + Light DAG (Pipeline-Oriented Thinking)| Updated my code to run asynchronously, added retry logic using tenacity and added randomised delays to be more human like. Also compared the perfomance of running the scraper headless=True vs headless= False where i found the headless mode is 31.4584 seconds faster. Also upgraded the code to validate results so that in future when i connect it to my db itll be easier|
 | Day 8 |PostgreSQL Integration + SQLmodel + Terraform to RDS | applied what was learnt on day 4 to design my Schemas, implememnt the model classes, connect my scraper to my **postgresql database and debloyed my RDS to AWS using terraform script |
 |Day 9|FastAPI endpoints|Today was my restday and i only made my api endpoints while also practicing my SQL queries in both sql and python, learned how to use selectinload and other advanced things that i didnt cover on day 3|
-|Day 10|...
+|Day 10|Docker and CI/CD| Worked on building docker images and running them locally also covoured how to write the docker file and the CI/CD|
 ---
 
 ## 📌 Purpose
