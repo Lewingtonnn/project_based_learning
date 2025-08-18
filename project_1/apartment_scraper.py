@@ -66,6 +66,19 @@ async def safe_get_attribute(locator, attribute: str) -> str:
     retry=(retry_if_exception_type(PlaywrightError) | retry_if_exception_type(asyncio.TimeoutError)),
     reraise=True  # Re-raise the exception if all retries fail
 )
+
+async def scrap_page_with_different_structure(page:Page, url:str, existing_data:str)->dict:
+    '''Scrapes a page with a different HTML structure'''
+    logging.info(f'Using our Fallback data extraction method for {url}')
+#revisit this if the scraper achieves inefficent results
+
+
+
+
+
+
+
+
 async def goto_with_retry(page: Page, url: str, timeout: int = 60000):
     """
     Attempts to navigate to a URL with retry logic for network errors or timeouts.
@@ -162,6 +175,7 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
         'listing_verification': 'N/A',
         'lease_options': 'N/A',
         'year_built': 'N/A',
+        'price' : "Refer to the pricing and floor plan",
         'street': 'N/A',
         'city': 'N/A',
         'state': 'N/A',
@@ -172,6 +186,7 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
 
     # Define selectors for better maintainability
     selectors = {
+        'pricecontainer' : '.priceBedRangeInfoContainer',
         'title': 'h1.propertyName',
         'address_container': '.propertyAddressContainer',  # Container for street, city, state, zip
         'street_address': '.delivery-address span',
@@ -200,106 +215,119 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
         await add_random_delay(2, 7)  # Longer delay after navigating to a detail page
 
         # --- Wait for essential page elements to load ---
-        await page.wait_for_selector(selectors['title'], timeout=60000)  # Wait for title
-        # Wait for floor plan sections to load
-        await page.wait_for_selector('div.pricingGridItem', timeout=60000)  # Ensure floor plan container is loaded
-        await page.wait_for_selector('li.unitContainer', timeout=60000)  # Ensure at least one unit container is present
+        title_locators=page.locator(selectors['title'])
+        is_standard_page= await title_locators.count() > 0
 
-        # --- Extract Main Property Details ---
-        data['title'] = await safe_inner_text(page.locator(selectors['title']).first)
+        #if there's the title selectors we scrap using our main scrap logic
 
-        # Extract and parse address components more robustly
-        data['street'] = await safe_inner_text(page.locator(selectors['street_address']).first)
-        data['city'] = await safe_inner_text(page.locator(selectors['city_state_zip_container']).locator(
-            'span.address-city').first)  # Targeted city span
-        data['state'] = await safe_inner_text(
-            page.locator(selectors['state_zip_container']).locator('span').nth(0))  # First span in stateZipContainer
-        data['zip_code'] = await safe_inner_text(
-            page.locator(selectors['state_zip_container']).locator('span').nth(1))  # Second span in stateZipContainer
+        if is_standard_page:
+            logging.info('Standard page structure detected')
 
-        # Reconstruct full address for consistency
-        data['address'] = f"{data['street']}, {data['city']}, {data['state']} {data['zip_code']}"
-        # Clean up "N/A" components if any
-        data['address'] = ", ".join(filter(lambda x: x != 'N/A', data['address'].split(', '))).strip()
 
-        data['property_reviews'] = await safe_inner_text(page.locator(selectors['property_reviews']).first)
-        data['listing_verification'] = await safe_inner_text(page.locator(selectors['listing_verification']).first)
 
-        # Extract Lease Options
-        lease_options = []
-        lease_options_container = page.locator(selectors['lease_options_container'])
-        if await lease_options_container.count() > 0:
-            lease_option_elements = lease_options_container.locator('.component-list .column')
-            for i in range(await lease_option_elements.count()):
-                option = await safe_inner_text(lease_option_elements.nth(i))
-                if option != "N/A":
-                    lease_options.append(option)
-        data['lease_options'] = lease_options if lease_options else 'N/A'
+            # Wait for floor plan sections to load
+            #await page.wait_for_selector('div.pricingGridItem', timeout=60000)  # Ensure floor plan container is loaded
+            #await page.wait_for_selector('li.unitContainer', timeout=60000)  # Ensure at least one unit container is present
 
-        # Extract Year Built
-        year_built_locator = page.locator(selectors['year_built_container'])
-        year_built_text = await safe_inner_text(year_built_locator)
-        year_built = 'N/A'
-        if "Built in" in year_built_text:
-            try:
-                # Extract year using regex for robustness if needed, or simple split
-                year_built = year_built_text.split('Built in ')[-1].split(' ')[0].strip()
-            except IndexError:
-                logging.warning(f"Could not parse year built from '{year_built_text}' for {url}")
-        data['year_built'] = year_built
+            # --- Extract Main Property Details ---
+            data['title'] = await safe_inner_text(page.locator(selectors['title']).first)
 
-        # --- Extract Pricing and Floor Plans ---
-        all_units_data = []
-        unit_cards_locators = page.locator(selectors['unit_cards'])
-        unit_cards_count = await unit_cards_locators.count()
-        logging.info(f"Found {unit_cards_count} pricing and floor plans for {url}. Limiting to 1.")
+            # Extract and parse address components more robustly
+            data['street'] = await safe_inner_text(page.locator(selectors['street_address']).first)
+            data['city'] = await safe_inner_text(page.locator(selectors['city_state_zip_container']).locator(
+                'span.address-city').first)  # Targeted city span
+            data['state'] = await safe_inner_text(
+                page.locator(selectors['state_zip_container']).locator('span').nth(0))  # First span in stateZipContainer
+            data['zip_code'] = await safe_inner_text(
+                page.locator(selectors['state_zip_container']).locator('span').nth(1))  # Second span in stateZipContainer
 
-        # Limit floor plans to a manageable number (e.g., 5) for efficiency and anti-bot.
-        # Adjust '5' to any number you need. For testing, starting with 1 or 2 is good.
-        limit_floor_plans = min(unit_cards_count, 5)
+            # Reconstruct full address for consistency
+            data['address'] = f"{data['street']}, {data['city']}, {data['state']} {data['zip_code']}"
+            # Clean up "N/A" components if any
+            data['address'] = ", ".join(filter(lambda x: x != 'N/A', data['address'].split(', '))).strip()
 
-        for i in range(limit_floor_plans):
-            unit_card = unit_cards_locators.nth(i)
-            unit_pricing_data = {
-                'apartment_name':"N/A", 'rent_price_range': 'N/A', 'bedrooms': 'N/A',
-                'bathrooms': 'N/A', 'sqft': 'N/A', 'unit': 'N/A',
-                'base_rent': 'N/A', 'availability': 'N/A', 'details_link': 'N/A'
-            }
+            data['property_reviews'] = await safe_inner_text(page.locator(selectors['property_reviews']).first)
+            data['listing_verification'] = await safe_inner_text(page.locator(selectors['listing_verification']).first)
 
-            try:
-                # Extract data relative to the current unit_card using safe helpers
-                unit_pricing_data['apartment_name'] = await safe_inner_text(
-                    unit_card.locator(selectors['apartment_name']))
-                unit_pricing_data['rent_price_range'] = await safe_inner_text(
-                    unit_card.locator(selectors['rent_price_range']))
-                unit_pricing_data['bedrooms'] = await safe_get_attribute(unit_card, selectors['bedrooms_attr'])
-                unit_pricing_data['bathrooms'] = await safe_get_attribute(unit_card, selectors['bathrooms_attr'])
+            # Extract Lease Options
+            lease_options = []
+            lease_options_container = page.locator(selectors['lease_options_container'])
+            if await lease_options_container.count() > 0:
+                lease_option_elements = lease_options_container.locator('.component-list .column')
+                for i in range(await lease_option_elements.count()):
+                    option = await safe_inner_text(lease_option_elements.nth(i))
+                    if option != "N/A":
+                        lease_options.append(option)
+            data['lease_options'] = lease_options if lease_options else 'N/A'
 
-                # Robust SQFT extraction logic
-                sqft_val = await safe_inner_text(unit_card.locator(selectors['sqft_col']))
-                if sqft_val == "N/A":  # Fallback if direct column not found or empty
-                    details_spans = unit_card.locator(selectors['details_sqft_text'])
-                    for j in range(await details_spans.count()):
-                        text = await safe_inner_text(details_spans.nth(j))
-                        if "Sq Ft" in text:
-                            sqft_val = text.replace("Sq Ft", "").strip()
-                            break
-                unit_pricing_data['sqft'] = sqft_val
+            # Extract Year Built
+            year_built_locator = page.locator(selectors['year_built_container'])
+            year_built_text = await safe_inner_text(year_built_locator)
+            year_built = 'N/A'
+            if "Built in" in year_built_text:
+                try:
+                    # Extract year using regex for robustness if needed, or simple split
+                    year_built = year_built_text.split('Built in ')[-1].split(' ')[0].strip()
+                except IndexError:
+                    logging.warning(f"Could not parse year built from '{year_built_text}' for {url}")
+            data['year_built'] = year_built
 
-                unit_pricing_data['unit'] = await safe_inner_text(unit_card.locator(selectors['unit']))
-                unit_pricing_data['base_rent'] = await safe_inner_text(unit_card.locator(selectors['base_rent']))
-                unit_pricing_data['availability'] = await safe_inner_text(unit_card.locator(selectors['availability']))
-                unit_pricing_data['details_link'] = await safe_get_attribute(unit_card, selectors['details_link_attr'])
+            # --- Extract Pricing and Floor Plans ---
+            all_units_data = []
+            unit_cards_locators = page.locator(selectors['unit_cards'])
+            unit_cards_count = await unit_cards_locators.count()
+            logging.info(f"Found {unit_cards_count} pricing and floor plans for {url}. Limiting to 1.")
 
-                all_units_data.append(unit_pricing_data)
+            # Limit floor plans to a manageable number (e.g., 5) for efficiency and anti-bot.
+            # Adjust '5' to any number you need. For testing, starting with 1 or 2 is good.
+            limit_floor_plans = min(unit_cards_count, 5)
 
-            except Exception as inner_e:
-                logging.warning(f"Failed to scrape some unit details for {url}, unit {i}: {inner_e}")
-                all_units_data.append(unit_pricing_data)  # Append partial data even on inner error
+            for i in range(limit_floor_plans):
+                unit_card = unit_cards_locators.nth(i)
+                unit_pricing_data = {
+                    'apartment_name':"N/A", 'rent_price_range': 'N/A', 'bedrooms': 'N/A',
+                    'bathrooms': 'N/A', 'sqft': 'N/A', 'unit': 'N/A',
+                    'base_rent': 'N/A', 'availability': 'N/A', 'details_link': 'N/A'
+                }
 
-        data['pricing_and_floor_plans'] = all_units_data
+                try:
+                    # Extract data relative to the current unit_card using safe helpers
+                    unit_pricing_data['apartment_name'] = await safe_inner_text(
+                        unit_card.locator(selectors['apartment_name']))
+                    unit_pricing_data['rent_price_range'] = await safe_inner_text(
+                        unit_card.locator(selectors['rent_price_range']))
+                    unit_pricing_data['bedrooms'] = await safe_get_attribute(unit_card, selectors['bedrooms_attr'])
+                    unit_pricing_data['bathrooms'] = await safe_get_attribute(unit_card, selectors['bathrooms_attr'])
 
-        logging.info(f"Finished extraction for {url}")
+                    # Robust SQFT extraction logic
+                    sqft_val = await safe_inner_text(unit_card.locator(selectors['sqft_col']))
+                    if sqft_val == "N/A":  # Fallback if direct column not found or empty
+                        details_spans = unit_card.locator(selectors['details_sqft_text'])
+                        for j in range(await details_spans.count()):
+                            text = await safe_inner_text(details_spans.nth(j))
+                            if "Sq Ft" in text:
+                                sqft_val = text.replace("Sq Ft", "").strip()
+                                break
+                    unit_pricing_data['sqft'] = sqft_val
+
+                    unit_pricing_data['unit'] = await safe_inner_text(unit_card.locator(selectors['unit']))
+                    unit_pricing_data['base_rent'] = await safe_inner_text(unit_card.locator(selectors['base_rent']))
+                    unit_pricing_data['availability'] = await safe_inner_text(unit_card.locator(selectors['availability']))
+                    unit_pricing_data['details_link'] = await safe_get_attribute(unit_card, selectors['details_link_attr'])
+
+                    all_units_data.append(unit_pricing_data)
+
+                except Exception as inner_e:
+                    logging.warning(f"Failed to scrape some unit details for {url}, unit {i}: {inner_e}")
+                    all_units_data.append(unit_pricing_data)  # Append partial data even on inner error
+
+            data['pricing_and_floor_plans'] = all_units_data
+
+            logging.info(f"Finished extraction for standard page: {url}")
+        else:
+            logging.warning('Standard title not found redirecting to fallback data extraction method')
+            # data= scrape_page_with_different_structure(page,url,data)
+
 
     except Exception as e:
         logging.error(f"Error scraping apartment page {url} after retries: {e}")
@@ -307,7 +335,7 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
 
     # --- 2. VALIDATE ---
     # The validation status can be set here based on critical fields.
-    if data['title'] == 'N/A' or not data['pricing_and_floor_plans']:
+    if data['address'] == 'N/A': #some properties scraped dont contain critical fields like title, pricing and floor plans since they need you to contact owner for the info so we cant use that data to decide whether our scraper scraped the listing well instead i have address since in all properties address is always available so we use that to jusdge our scrapers performance
         data['validation_status'] = 'Failed: Critical Data Missing'
         logging.warning(f"Validation status: Failed for {url}")
     else:
@@ -325,6 +353,7 @@ async def main():
     This function correctly uses asyncio.Semaphore for controlled concurrency
     and ensures distinct URLs are scraped.
     """
+    start_time=time.time()
     scraped_final_data = []
     try:
         async with async_playwright() as p:
@@ -344,7 +373,7 @@ async def main():
 
             # Limit the number of properties to scrape for faster testing/development
 
-            properties_to_scrape_limit = 10  # Set to 5 as a reasonable test sample
+            properties_to_scrape_limit = 2  # Set to 5 as a reasonable test sample
             limited_property_urls = property_urls[:properties_to_scrape_limit]
 
             logging.info(
@@ -389,6 +418,9 @@ async def main():
             json.dump(scraped_final_data,f, ensure_ascii=False, indent=4)
         return scraped_final_data
     # Return whatever data was collected before the critical error
+    stop_time= time.time()
+    total_time_taken= stop_time-start_time
+    logging.info(f"it has take {total_time_taken} to complete ")
 
 
 async def scrape_with_semaphore(page_context, url: str, semaphore: asyncio.Semaphore) -> dict:
@@ -404,7 +436,7 @@ async def scrape_with_semaphore(page_context, url: str, semaphore: asyncio.Semap
         finally:
             if not page.is_closed():
                 await page.close()
-            await add_random_delay(2, 7)  # Add a slightly longer delay after each page scrape
+            await add_random_delay(1, 3)  # Add a slightly longer delay after each page scrape
 
 
 # --- Performance Comparison Functions (for Day 4 "Cementing Task") ---
@@ -467,6 +499,6 @@ async def compare_performance():
 if __name__ == '__main__':
     scraped_data_output = asyncio.run(main())
     logging.info(f"\nFinal Scraped Data Summary: Collected {len(scraped_data_output)} successful property entries.")
-    asyncio.run(compare_performance())
     from db_ops import save_scraped_data_to_db
-    asyncio.run(save_scraped_data_to_db(scraped_data_output))
+    #asyncio.run(save_scraped_data_to_db(scraped_data_output))
+    #asyncio.run(compare_performance())

@@ -1,2 +1,7 @@
 .env
 playwright_screenshot.png
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
