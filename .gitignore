@@ -5,3 +5,4 @@ playwright_screenshot.png
 *.tfstate.*
 .terraform/
 .terraform.lock.hcl
+terraform.tfvars

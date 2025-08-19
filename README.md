@@ -4,6 +4,8 @@ This repository documents my daily progress and learning from a backend-focused 
 
 I’m committing small projects and code snippets every day to track my growth, keep myself accountable, and build a public learning record.
 
+Also one day in this bootcamp doesnt represent the literal 24 hours day, it represents milestones, some days took longer to complete others upto three typical days while others took me around 6-8 hrs to complete
+
 ---
 
 ## 📅 Daily Progress
@@ -18,8 +20,10 @@ I’m committing small projects and code snippets every day to track my growth, 
 | Day 6 |Playwright Scraping + Anti-Ban Tactics| Updated my skills on Playwright to the most recent knowledge and practices for Playwright async, built a scraper that will later feed our db implimenting rotating headers and practiced using rotating proxies|
 |Day 7 |Async + Retry Logic + Light DAG (Pipeline-Oriented Thinking)| Updated my code to run asynchronously, added retry logic using tenacity and added randomised delays to be more human like. Also compared the perfomance of running the scraper headless=True vs headless= False where i found the headless mode is 31.4584 seconds faster. Also upgraded the code to validate results so that in future when i connect it to my db itll be easier|
 | Day 8 |PostgreSQL Integration + SQLmodel + Terraform to RDS | applied what was learnt on day 4 to design my Schemas, implememnt the model classes, connect my scraper to my **postgresql database and debloyed my RDS to AWS using terraform script |
-|Day 9|FastAPI endpoints|Today was my restday and i only made my api endpoints while also practicing my SQL queries in both sql and python, learned how to use selectinload and other advanced things that i didnt cover on day 3|
-|Day 10|...
+| Day 9 |FastAPI endpoints|Today was my restday and i only made my api endpoints while also practicing my SQL queries in both sql and python, learned how to use selectinload and other advanced things that i didnt cover on day 3|
+| Day 10 |Docker and CI/CD| Worked on building docker images and running them locally also covoured how to write the docker file and the CI/CD|
+| Day 11 | VPC/Security Groups + Architecture Diagram| Learned and  Added Terraform modules for VPC, security groups also Drew and documented the architecture diagram|
+| Day 12 |Monitoring + Logging + Alerts|...|
 ---
 
 ## 📌 Purpose
