@@ -5,7 +5,12 @@ import logging
 import json
 from playwright.async_api import async_playwright, Page, Error as PlaywrightError
 from tenacity import retry, wait_fixed, stop_after_attempt, retry_if_exception_type
-
+import psutil
+from metrics import (
+    SCRAPER_SUCCESS, SCRAPER_FAILURES, LISTINGS_SCRAPED,
+    SCRAPE_DURATION, VALIDATION_FAILURES, DUPLICATE_RECORDS,
+    DB_INSERT_FAILURES, RETRIES_ATTEMPTED, MEMORY_USAGE, CPU_USAGE, VALIDATION_SUCCESS
+)
 # Configure logging for structured output
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -71,6 +76,12 @@ async def scrap_page_with_different_structure(page:Page, url:str, existing_data:
     '''Scrapes a page with a different HTML structure'''
     logging.info(f'Using our Fallback data extraction method for {url}')
 #revisit this if the scraper achieves inefficent results
+
+
+
+#--------------------------
+#Prometheus to track our scraper
+from prometheus_client import Counter, start_http_server
 
 
 
@@ -280,7 +291,7 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
 
             # Limit floor plans to a manageable number (e.g., 5) for efficiency and anti-bot.
             # Adjust '5' to any number you need. For testing, starting with 1 or 2 is good.
-            limit_floor_plans = min(unit_cards_count, 5)
+            limit_floor_plans = min(unit_cards_count, 20)
 
             for i in range(limit_floor_plans):
                 unit_card = unit_cards_locators.nth(i)
@@ -328,8 +339,13 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
             logging.warning('Standard title not found redirecting to fallback data extraction method')
             # data= scrape_page_with_different_structure(page,url,data)
 
+        SCRAPER_SUCCESS.labels(source=url).inc()
+        LISTINGS_SCRAPED.labels(source=url).inc()
+
 
     except Exception as e:
+        SCRAPER_FAILURES.labels(page=url).inc()
+
         logging.error(f"Error scraping apartment page {url} after retries: {e}")
         return data  # Return current data (possibly incomplete/N/A) if main scraping fails
 
@@ -338,9 +354,11 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
     if data['address'] == 'N/A': #some properties scraped dont contain critical fields like title, pricing and floor plans since they need you to contact owner for the info so we cant use that data to decide whether our scraper scraped the listing well instead i have address since in all properties address is always available so we use that to jusdge our scrapers performance
         data['validation_status'] = 'Failed: Critical Data Missing'
         logging.warning(f"Validation status: Failed for {url}")
+        VALIDATION_FAILURES.labels(field=data['validation_status'])
     else:
         data['validation_status'] = 'Success'
         logging.info(f"Validation status: Success for {url}")
+        VALIDATION_SUCCESS.labels(field=data['validation_status'])
 
     return data
 
@@ -373,7 +391,7 @@ async def main():
 
             # Limit the number of properties to scrape for faster testing/development
 
-            properties_to_scrape_limit = 2  # Set to 5 as a reasonable test sample
+            properties_to_scrape_limit = 100  # Set to 5 as a reasonable test sample
             limited_property_urls = property_urls[:properties_to_scrape_limit]
 
             logging.info(
@@ -395,10 +413,12 @@ async def main():
             for res in results:
                 if isinstance(res, dict) and res.get('validation_status') == 'Success':
                     scraped_final_data.append(res)
+                    LISTINGS_SCRAPED.labels(source=url)
                 else:
                     error_msg = str(res) if isinstance(res,
                                                        Exception) else f"Validation Failed: {res.get('property_link', 'N/A')}"
                     logging.error(f"A property scrape failed or was invalid: {error_msg}")
+                    SCRAPER_FAILURES.labels(source=url).inc()
 
             # Ensure all pages opened within the context are closed
             for page_instance in context.pages:
@@ -413,14 +433,24 @@ async def main():
             return scraped_final_data
 
     except Exception as e:
+        RETRIES_ATTEMPTED.labels(source=url)
         logging.critical(f"A critical error occurred in main execution: {e}", exc_info=True)
+
+
         with open("apartments_data.json", "w", encoding="utf-8") as f:
             json.dump(scraped_final_data,f, ensure_ascii=False, indent=4)
         return scraped_final_data
     # Return whatever data was collected before the critical error
-    stop_time= time.time()
-    total_time_taken= stop_time-start_time
-    logging.info(f"it has take {total_time_taken} to complete ")
+    finally:
+        stop_time = time.time()
+        total_time_taken = stop_time - start_time
+        logging.info(f"It has taken {total_time_taken} seconds to complete.")
+        SCRAPE_DURATION.labels(source=url).observe(total_time_taken)
+
+        #update resource packages
+        MEMORY_USAGE.set(psutil.virtual_memory().used /1024 / 1024) #MB
+        CPU_USAGE.set(psutil.cpu_percent())
+
 
 
 async def scrape_with_semaphore(page_context, url: str, semaphore: asyncio.Semaphore) -> dict:
@@ -497,6 +527,8 @@ async def compare_performance():
 
 # --- Main Execution Block ---
 if __name__ == '__main__':
+    from prometheus_client import start_http_server
+    start_http_server(8001)
     scraped_data_output = asyncio.run(main())
     logging.info(f"\nFinal Scraped Data Summary: Collected {len(scraped_data_output)} successful property entries.")
     from db_ops import save_scraped_data_to_db

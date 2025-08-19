@@ -1,1 +1,40 @@
-[]
+[
+    {
+        "title": "3030 N. Sheridan Road",
+        "property_link": "https://www.apartments.com/3030-n-sheridan-road-chicago-il/pkf1wkt/",
+        "address": "3030 N Sheridan Rd, None, IL 60657",
+        "property_reviews": null,
+        "listing_verification": "Verified Listing",
+        "lease_options": [
+            "12"
+        ],
+        "year_built": "1912",
+        "price": "Refer to the pricing and floor plan",
+        "street": "3030 N Sheridan Rd",
+        "city": null,
+        "state": "IL",
+        "zip_code": "60657",
+        "property_type": "Apartment",
+        "pricing_and_floor_plans": [],
+        "validation_status": "Success"
+    },
+    {
+        "title": "20 E Scott",
+        "property_link": "https://www.apartments.com/20-e-scott-chicago-il/jq01xe4/",
+        "address": "20 E Scott St, None, IL 60610",
+        "property_reviews": "4.0",
+        "listing_verification": null,
+        "lease_options": [
+            "12 Month *For flexible lease options, please call!"
+        ],
+        "year_built": "1967",
+        "price": "Refer to the pricing and floor plan",
+        "street": "20 E Scott St",
+        "city": null,
+        "state": "IL",
+        "zip_code": "60610",
+        "property_type": "Apartment",
+        "pricing_and_floor_plans": [],
+        "validation_status": "Success"
+    }
+]

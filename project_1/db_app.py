@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from typing import Optional, List, Annotated
 
 from fastapi import FastAPI, Depends, Header, HTTPException
+
 from sqlmodel import SQLModel, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
@@ -30,7 +31,9 @@ logging.basicConfig(
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
+    logging.critical(f"DATABASE_URL environment variable is not set.")
     raise ValueError("DATABASE_URL environment variable is not set. Please set it to your PostgreSQL database URL.")
+
 
 engine: AsyncEngine = create_async_engine(DATABASE_URL, echo=False, future=True)
 
@@ -47,6 +50,7 @@ async def get_session() -> AsyncSession:
 async def create_db_and_tables():
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
+        logging.info('create_db_table function performed successfully')
 
 
 # -------------------------
@@ -105,6 +109,32 @@ app = FastAPI(
     version="2.0.0",
     lifespan=lifespan
 )
+
+#-------------------------------------------
+#Prometheus integration with our fast api
+#-----------------------------------------------
+from prometheus_client import Counter, Histogram, generate_latest
+from starlette.responses import Response
+
+REQUEST_COUNT = Counter("api_request_total", "Total API Request",["endpoint"])
+REQUEST_LATENCY = Histogram("api_request_latency_seconds", "Request latency")
+
+@app.middleware("http")
+async def track_requests(request, call_next):
+    import time
+    start_time = time.time()
+    response= await call_next(request)
+    process_time = time.time() - start_time
+
+    REQUEST_COUNT.labels(endpoint=request.url.path).inc()
+    REQUEST_LATENCY.observe(process_time)
+
+    return response
+
+@app.get("/metrics")
+async def metrics():
+    return Response(generate_latest(), media_type= "text/plain")
+
 
 
 # -------------------------
