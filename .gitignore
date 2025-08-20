@@ -6,3 +6,22 @@ playwright_screenshot.png
 .terraform/
 .terraform.lock.hcl
 terraform.tfvars
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Python
+__pycache__/
+*.pyc
+.env
+
+# Docker
+*.log
