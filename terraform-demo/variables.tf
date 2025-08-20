@@ -7,11 +7,11 @@ variable "aws_region" {
 variable "real_estate_api_project" {
   description = "A tag for the project name to organise resources"
   type        = string
-  default     = "DataEngineeringProject"
+  default     = "data_engineering_project"
 }
 
 variable "environment" {
-  description = "The environment for resource tagging"
+  description = "The_environment_for_resource_tagging"
   type        = string
   default     = "dev"
 }
@@ -34,8 +34,25 @@ variable "private_subnet_cidr" {
   default     = "10.0.2.0/24" # A /24 subnet for private, sensitive resources.
 }
 
+variable "private_subnet_cidr_2" {
+  description = "The CIDR block for the private subnet."
+  type        = string
+  default     = "10.0.3.0/24" # A /24 subnet for private, sensitive resources.
+}
 variable "availability_zone" {
   description = "The Availability Zone for your subnets."
   type        = string
   default     = "us-east-1a" # Select an AZ within your chosen region.
+}
+
+variable "availability_zone_2" {
+  description = "The second availability zone for private subnets"
+  type        = string
+  default     = "us-east-1b"
+}
+
+variable "db_password" {
+  description = "Master password for the PostgreSQL database."
+  type        = string
+  sensitive   = true # Mark as sensitive so Terraform masks its value in logs.
 }

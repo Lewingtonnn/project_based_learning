@@ -13,6 +13,11 @@ from contextlib import asynccontextmanager
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from dbmodels import Property, Pricing_and_floor_plans
+from prometheus_client import Counter, Histogram, generate_latest
+from starlette.responses import Response
+
+REQUEST_COUNT = Counter("api_request_total", "Total API Request",["endpoint"])
+REQUEST_LATENCY = Histogram("api_request_latency_seconds", "Request latency")
 
 load_dotenv()
 
@@ -96,6 +101,7 @@ class FloorPlanRead(BaseModel):
 async def lifespan(app: FastAPI):
     logging.info("Application Startup: Creating database tables if they don't exist")
     await create_db_and_tables()
+
     yield
     logging.info("Application Shutdown: Cleaning up process")
 
@@ -110,20 +116,17 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-#-------------------------------------------
-#Prometheus integration with our fast api
-#-----------------------------------------------
-from prometheus_client import Counter, Histogram, generate_latest
-from starlette.responses import Response
 
-REQUEST_COUNT = Counter("api_request_total", "Total API Request",["endpoint"])
-REQUEST_LATENCY = Histogram("api_request_latency_seconds", "Request latency")
+# ----
+# -------------------------------------------
+# Prometheus integration with our fast api
+# -----------------------------------------------
 
 @app.middleware("http")
 async def track_requests(request, call_next):
     import time
     start_time = time.time()
-    response= await call_next(request)
+    response = await call_next(request)
     process_time = time.time() - start_time
 
     REQUEST_COUNT.labels(endpoint=request.url.path).inc()
@@ -131,12 +134,13 @@ async def track_requests(request, call_next):
 
     return response
 
+
 @app.get("/metrics")
 async def metrics():
-    return Response(generate_latest(), media_type= "text/plain")
+    return Response(generate_latest(), media_type="text/plain")
 
 
-
+logging.info("Prometheus metrics endpoint and middleware attached.")
 # -------------------------
 # Routes
 # -------------------------

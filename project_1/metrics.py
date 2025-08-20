@@ -38,7 +38,7 @@ SCRAPE_DURATION = Histogram(
 VALIDATION_FAILURES = Counter(
     "data_validation_failures_total",
     "Total validation errors (e.g. missing price, city, year_built)",
-    ["field"]
+    ["source"]
 )
 
 DUPLICATE_RECORDS = Counter(
@@ -50,7 +50,7 @@ DUPLICATE_RECORDS = Counter(
 VALIDATION_SUCCESS = Counter(
     "validation_success_counts",
     "number of successful validation",
-    ['field']
+    ['source']
 )
 
 # ========================

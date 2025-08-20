@@ -36,6 +36,53 @@ resource "aws_subnet" "public" {
   }
 }
 
+resource "aws_subnet" "private_2" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.private_subnet_cidr_2 # You'll need a new CIDR block variable for this, e.g., "10.0.3.0/24"
+  availability_zone       = var.availability_zone_2
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name        = "${var.real_estate_api_project}-PrivateSubnet-2-${var.environment}"
+    Project     = var.real_estate_api_project
+    Environment = var.environment
+  }
+}
+
+
+resource "aws_subnet" "public_2" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.4.0/24"  # New CIDR block for second public subnet
+  availability_zone       = var.availability_zone_2
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name        = "${var.real_estate_api_project}-PublicSubnet-2-${var.environment}"
+    Project     = var.real_estate_api_project
+    Environment = var.environment
+  }
+}
+
+# Associate the new public subnet with the public route table
+resource "aws_route_table_association" "public_2" {
+  subnet_id      = aws_subnet.public_2.id
+  route_table_id = aws_route_table.public.id
+}
+
+# Create a new DB subnet group using PUBLIC subnets
+resource "aws_db_subnet_group" "public_db" {
+  name       = "${var.real_estate_api_project}-public-db-subnet-group-${var.environment}"
+  subnet_ids = [aws_subnet.public.id, aws_subnet.public_2.id]
+
+  tags = {
+    Name        = "${var.real_estate_api_project}-Public-DBSG-${var.environment}"
+    Project     = var.real_estate_api_project
+    Environment = var.environment
+  }
+}
+
+
+
 # Resource: aws_route_table - Defines the route table for the public subnet.
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
@@ -163,6 +210,14 @@ resource "aws_security_group" "private_sg" {
     security_groups = [aws_security_group.public_sg.id] # Source is the ID of the public security group.
   }
 
+  ingress {
+    description = "PostgreSQL from my public IP"
+    from_port = 5432
+    to_port = 5432
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   # Egress (Outbound) Rules:
   # Allow all outbound traffic.
   egress {
@@ -206,4 +261,24 @@ output "public_security_group_id" {
 output "private_security_group_id" {
   description = "The ID of the private security group."
   value       = aws_security_group.private_sg.id
+}
+
+output "db_instance_address" {
+  description = "The DNS address of the PostgreSQL DB instance."
+  value       = aws_db_instance.postgresql_db.address
+}
+
+output "db_instance_port" {
+  description = "The port of the PostgreSQL DB instance."
+  value       = aws_db_instance.postgresql_db.port
+}
+
+output "db_instance_username" {
+  description = "The master username for the PostgreSQL DB instance."
+  value       = aws_db_instance.postgresql_db.username
+}
+
+output "db_instance_name" {
+  description = "The name of the initial database created."
+  value       = aws_db_instance.postgresql_db.db_name
 }

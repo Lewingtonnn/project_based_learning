@@ -12,6 +12,7 @@ from metrics import (
     DB_INSERT_FAILURES, RETRIES_ATTEMPTED, MEMORY_USAGE, CPU_USAGE, VALIDATION_SUCCESS
 )
 # Configure logging for structured output
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
@@ -82,13 +83,7 @@ async def scrap_page_with_different_structure(page:Page, url:str, existing_data:
 #--------------------------
 #Prometheus to track our scraper
 from prometheus_client import Counter, start_http_server
-
-
-
-
-
-
-
+#--------------------------------------------------------
 
 async def goto_with_retry(page: Page, url: str, timeout: int = 60000):
     """
@@ -339,12 +334,12 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
             logging.warning('Standard title not found redirecting to fallback data extraction method')
             # data= scrape_page_with_different_structure(page,url,data)
 
-        SCRAPER_SUCCESS.labels(source=url).inc()
-        LISTINGS_SCRAPED.labels(source=url).inc()
+        SCRAPER_SUCCESS.labels(source='apartments_com').inc()
+        LISTINGS_SCRAPED.labels(source='apartments_com').inc()
 
 
     except Exception as e:
-        SCRAPER_FAILURES.labels(page=url).inc()
+        SCRAPER_FAILURES.labels(source='apartments_com').inc()
 
         logging.error(f"Error scraping apartment page {url} after retries: {e}")
         return data  # Return current data (possibly incomplete/N/A) if main scraping fails
@@ -354,11 +349,11 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
     if data['address'] == 'N/A': #some properties scraped dont contain critical fields like title, pricing and floor plans since they need you to contact owner for the info so we cant use that data to decide whether our scraper scraped the listing well instead i have address since in all properties address is always available so we use that to jusdge our scrapers performance
         data['validation_status'] = 'Failed: Critical Data Missing'
         logging.warning(f"Validation status: Failed for {url}")
-        VALIDATION_FAILURES.labels(field=data['validation_status'])
+        VALIDATION_FAILURES.labels(source='apartment_com').inc()
     else:
         data['validation_status'] = 'Success'
         logging.info(f"Validation status: Success for {url}")
-        VALIDATION_SUCCESS.labels(field=data['validation_status'])
+        VALIDATION_SUCCESS.labels(source='apartments_com').inc()
 
     return data
 
@@ -371,6 +366,7 @@ async def main():
     This function correctly uses asyncio.Semaphore for controlled concurrency
     and ensures distinct URLs are scraped.
     """
+    logging.info("Started the main function")
     start_time=time.time()
     scraped_final_data = []
     try:
@@ -413,12 +409,12 @@ async def main():
             for res in results:
                 if isinstance(res, dict) and res.get('validation_status') == 'Success':
                     scraped_final_data.append(res)
-                    LISTINGS_SCRAPED.labels(source=url)
+                    LISTINGS_SCRAPED.labels(source=main_url)
                 else:
                     error_msg = str(res) if isinstance(res,
                                                        Exception) else f"Validation Failed: {res.get('property_link', 'N/A')}"
                     logging.error(f"A property scrape failed or was invalid: {error_msg}")
-                    SCRAPER_FAILURES.labels(source=url).inc()
+                    SCRAPER_FAILURES.labels(source=main_url).inc()
 
             # Ensure all pages opened within the context are closed
             for page_instance in context.pages:
@@ -433,7 +429,7 @@ async def main():
             return scraped_final_data
 
     except Exception as e:
-        RETRIES_ATTEMPTED.labels(source=url)
+        RETRIES_ATTEMPTED.labels(source=main_url).inc()
         logging.critical(f"A critical error occurred in main execution: {e}", exc_info=True)
 
 
@@ -529,6 +525,7 @@ async def compare_performance():
 if __name__ == '__main__':
     from prometheus_client import start_http_server
     start_http_server(8001)
+    logging.info("HTTP server started, begining data extraction")
     scraped_data_output = asyncio.run(main())
     logging.info(f"\nFinal Scraped Data Summary: Collected {len(scraped_data_output)} successful property entries.")
     from db_ops import save_scraped_data_to_db
