@@ -23,7 +23,9 @@ Also one day in this bootcamp doesnt represent the literal 24 hours day, it repr
 | Day 9 |FastAPI endpoints|Today was my restday and i only made my api endpoints while also practicing my SQL queries in both sql and python, learned how to use selectinload and other advanced things that i didnt cover on day 3|
 | Day 10 |Docker and CI/CD| Worked on building docker images and running them locally also covoured how to write the docker file and the CI/CD|
 | Day 11 | VPC/Security Groups + Architecture Diagram| Learned and  Added Terraform modules for VPC, security groups also Drew and documented the architecture diagram|
-| Day 12 |Monitoring + Logging + Alerts|...|
+| Day 12 |Monitoring + Logging + Alerts|Improved logging in my python files, integrated my fastapi app and scraper with prometheus for monitoring and made visual dashboards using grafana from the data from prometheus|
+| Day 13 | ML Insight Layer  | ... |
+
 ---
 
 ## 📌 Purpose
