@@ -24,7 +24,7 @@ Also one day in this bootcamp doesnt represent the literal 24 hours day, it repr
 | Day 10 |Docker and CI/CD| Worked on building docker images and running them locally also covoured how to write the docker file and the CI/CD|
 | Day 11 | VPC/Security Groups + Architecture Diagram| Learned and  Added Terraform modules for VPC, security groups also Drew and documented the architecture diagram|
 | Day 12 |Monitoring + Logging + Alerts|Improved logging in my python files, integrated my fastapi app and scraper with prometheus for monitoring and made visual dashboards using grafana from the data from prometheus|
-| Day 13 | ML Insight Layer  | ... |
+| Day 13 | ML Insight Layer  | Trained my own model using data(2200 records) acqured from previous days and Added a lightweight ML Layer to project 1 |
 
 ---
 
