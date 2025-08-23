@@ -25,8 +25,8 @@ Also one day in this bootcamp doesnt represent the literal 24 hours day, it repr
 | Day 11 | VPC/Security Groups + Architecture Diagram| Learned and  Added Terraform modules for VPC, security groups also Drew and documented the architecture diagram|
 | Day 12 |Monitoring + Logging + Alerts|Improved logging in my python files, integrated my fastapi app and scraper with prometheus for monitoring and made visual dashboards using grafana from the data from prometheus|
 | Day 13 | ML Insight Layer  | Trained my own model using linear regression from data(2,200 records) acqured from previous days and Added a lightweight ML Layer to project 1, and created an API endpoint where users can input various fields like state, bedrooms, bathrooms, property reviews to predict their price |
-|Day 14|Refactor + Dead-letter Queue|Refactored my code into clean modules and integrated DLQ into data pipeline.
-|
+|Day 14|Refactor + Dead-letter Queue|Refactored my code into clean modules and integrated DLQ into data pipeline.|
+| Day 15 |Documentation||
 
 ---
 
