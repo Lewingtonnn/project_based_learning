@@ -1,6 +1,10 @@
 from prometheus_client import Counter, Histogram, Gauge
 
 # ========================
+# General Metrics
+
+
+# ========================
 # Core Scraper Metrics
 # ========================
 

@@ -16,7 +16,11 @@ from dbmodels import Property, Pricing_and_floor_plans
 from prometheus_client import Counter, Histogram, generate_latest
 from starlette.responses import Response
 
-REQUEST_COUNT = Counter("api_request_total", "Total API Request",["endpoint"])
+# Model and ML-related imports
+import joblib
+import pandas as pd
+
+REQUEST_COUNT = Counter("api_request_total", "Total API Request", ["endpoint"])
 REQUEST_LATENCY = Histogram("api_request_latency_seconds", "Request latency")
 
 load_dotenv()
@@ -29,7 +33,6 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-
 # -------------------------
 # Database setup (Async)
 # -------------------------
@@ -38,7 +41,6 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     logging.critical(f"DATABASE_URL environment variable is not set.")
     raise ValueError("DATABASE_URL environment variable is not set. Please set it to your PostgreSQL database URL.")
-
 
 engine: AsyncEngine = create_async_engine(DATABASE_URL, echo=False, future=True)
 
@@ -63,7 +65,6 @@ async def create_db_and_tables():
 # -------------------------
 class Authorisation:
     async def __call__(self, x_token: Annotated[str, Header()]) -> str:
-
         token = os.getenv("API_TOKEN")
         if x_token != token:
             raise HTTPException(status_code=403, detail="Invalid Token")
@@ -95,12 +96,29 @@ class FloorPlanRead(BaseModel):
 
 
 # -------------------------
+# Global Model
+# -------------------------
+model = None
+
+
+# -------------------------
 # Lifespan
 # -------------------------
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    global model
     logging.info("Application Startup: Creating database tables if they don't exist")
     await create_db_and_tables()
+    logging.info("Application Startup: Loading pre-trained model")
+    try:
+        model = joblib.load("linear_regression_rent_model_pipeline.pkl")
+        logging.info("Model loaded successfully.")
+    except FileNotFoundError:
+        logging.critical("Model file not found. 'linear_regression_rent_model_pipeline.pkl' is missing.")
+        model = None
+    except Exception as e:
+        logging.critical(f"An error occurred while loading the model: {e}")
+        model = None
 
     yield
     logging.info("Application Shutdown: Cleaning up process")
@@ -111,7 +129,7 @@ async def lifespan(app: FastAPI):
 # -------------------------
 app = FastAPI(
     title="Real Estate Data API",
-    description="API for accessing scraped real estate property and floor plan data.",
+    description="API For Accessing Real Estate Property and Floor Plan Data. Also provides analytics and predictions.",
     version="2.0.0",
     lifespan=lifespan
 )
@@ -141,6 +159,8 @@ async def metrics():
 
 
 logging.info("Prometheus metrics endpoint and middleware attached.")
+
+
 # -------------------------
 # Routes
 # -------------------------
@@ -151,8 +171,8 @@ async def welcome():
 
 @app.get("/all-property-listings", response_model=List[PropertyRead], tags=["Properties"])
 async def get_listings(
-    session: AsyncSession = Depends(get_session),
-    is_authorized: str = Depends(Authorisation())
+        session: AsyncSession = Depends(get_session),
+        is_authorized: str = Depends(Authorisation())
 ):
     result = await session.exec(select(Property))
     return result.all()
@@ -160,9 +180,9 @@ async def get_listings(
 
 @app.get("/properties/{property_id}/floor-plans", response_model=List[FloorPlanRead], tags=["Floor Plans"])
 async def get_floor_plans(
-    property_id: int,
-    session: AsyncSession = Depends(get_session),
-    is_authorized: str = Depends(Authorisation())
+        property_id: int,
+        session: AsyncSession = Depends(get_session),
+        is_authorized: str = Depends(Authorisation())
 ):
     property_exists = await session.exec(select(Property).where(Property.id == property_id))
     if not property_exists.first():
@@ -176,12 +196,12 @@ async def get_floor_plans(
 
 @app.get("/properties/search", response_model=List[PropertyRead], tags=["Properties"])
 async def search_properties(
-    session: AsyncSession = Depends(get_session),
-    is_authorized: str = Depends(Authorisation()),
-    city: Optional[str] = None,
-    min_bedrooms: Optional[int] = None,
-    max_base_rent: Optional[float] = None,
-    year_built: Optional[int] = None,
+        session: AsyncSession = Depends(get_session),
+        is_authorized: str = Depends(Authorisation()),
+        city: Optional[str] = None,
+        min_bedrooms: Optional[int] = None,
+        max_base_rent: Optional[float] = None,
+        year_built: Optional[int] = None,
 ):
     statement = select(Property).join(Pricing_and_floor_plans, isouter=True)
 
@@ -202,9 +222,9 @@ async def search_properties(
 
 @app.get("/top/{x}/most-affordable-properties", response_model=List[FloorPlanRead], tags=["Analytics"])
 async def get_top_x_most_affordable_properties(
-    x: int,
-    session: AsyncSession = Depends(get_session),
-    is_authorized: str = Depends(Authorisation())
+        x: int,
+        session: AsyncSession = Depends(get_session),
+        is_authorized: str = Depends(Authorisation())
 ):
     result = await session.exec(
         select(Pricing_and_floor_plans).order_by(Pricing_and_floor_plans.base_rent.asc()).limit(x)
@@ -214,9 +234,9 @@ async def get_top_x_most_affordable_properties(
 
 @app.get("/top/{x}/most-expensive-properties", response_model=List[FloorPlanRead], tags=["Analytics"])
 async def get_top_x_most_expensive_properties(
-    x: int,
-    session: AsyncSession = Depends(get_session),
-    is_authorized: str = Depends(Authorisation())
+        x: int,
+        session: AsyncSession = Depends(get_session),
+        is_authorized: str = Depends(Authorisation())
 ):
     result = await session.exec(
         select(Pricing_and_floor_plans).order_by(Pricing_and_floor_plans.base_rent.desc()).limit(x)
@@ -226,9 +246,45 @@ async def get_top_x_most_expensive_properties(
 
 @app.get("/this-weeks-listings", response_model=List[PropertyRead], tags=["Properties"])
 async def get_this_weeks_listings(
-    session: AsyncSession = Depends(get_session),
-    is_authorized: str = Depends(Authorisation())
+        session: AsyncSession = Depends(get_session),
+        is_authorized: str = Depends(Authorisation())
 ):
     one_week_ago = datetime.now() - timedelta(days=7)
     result = await session.exec(select(Property).where(Property.timestamp >= one_week_ago))
     return result.all()
+
+
+# loading model from joblib and exposing the predictions
+@app.get("/predict-rent", response_model=float, tags=["Prediction"])
+async def predict_rent(
+        bedrooms: int,
+        bathrooms: float,
+        property_reviews: float,
+        sqft: int,
+        year_built: Optional[int]= None,
+        state: Optional[str] = None,
+        listing_verification: Optional[str] = None,
+        session: AsyncSession = Depends(get_session),
+        is_authorized: str = Depends(Authorisation())
+):
+    # Check if the model is loaded
+    if model is None:
+        raise HTTPException(status_code=503,
+                            detail="Prediction service is temporarily unavailable. The model is not loaded.")
+
+    # Create a DataFrame for the input data
+    input_data = pd.DataFrame({
+        'bedrooms': [bedrooms],
+        'bathrooms': [bathrooms],
+        'year_built': [year_built],
+        'property_reviews': [property_reviews],
+        'sqft': [sqft],
+        'state': [state] if state else ['Unknown'],  # Handle None state
+        'listing_verification': [listing_verification] if listing_verification else ['Unknown']
+    })
+
+    # Make predictions using the global model
+    prediction = model.predict(input_data)
+
+    # Return the predicted rent price
+    return float(prediction[0])

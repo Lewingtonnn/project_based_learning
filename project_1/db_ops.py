@@ -115,7 +115,7 @@ async def save_scraped_data_to_db(scraped_data: List[Dict[str, Any]]):
                     existing_property.zip_code = prop_data.get('zip_code')
                     existing_property.property_reviews = parsed_property_reviews
                     existing_property.listing_verification = prop_data.get('listing_verification')
-                    existing_property.lease_options = lease_options_str
+                    existing_property.lease_option = lease_options_str
                     existing_property.year_built = parsed_year_built
                     existing_property.validation_status = prop_data.get('validation_status', 'pending')
                     existing_property.property_type = prop_data.get('property_type', 'apartment')
@@ -124,8 +124,10 @@ async def save_scraped_data_to_db(scraped_data: List[Dict[str, Any]]):
                     existing_property.timestamp = now_utc_naive
 
                     session.add(existing_property)
+                    from sqlmodel import delete
+                    delete_stmt=delete(Pricing_and_floor_plans).where(Pricing_and_floor_plans.property_id==existing_property.id)
 
-                    await session.exec(Pricing_and_floor_plans).filter_by(property_id=existing_property.id).delete()
+                    await session.exec(delete_stmt)
                     await session.flush()
                 else:
                     logging.info(f"Inserting new property: {prop_data.get('title', 'N/A')}")

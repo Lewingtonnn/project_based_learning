@@ -1,5 +1,6 @@
 import asyncio
 import random
+import sys
 import time
 import logging
 import json
@@ -12,8 +13,25 @@ from metrics import (
     DB_INSERT_FAILURES, RETRIES_ATTEMPTED, MEMORY_USAGE, CPU_USAGE, VALIDATION_SUCCESS
 )
 # Configure logging for structured output
+#define the log file
+LOG_FILE_PATH= 'DataExtraction.log'
+#configure the logger
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.INFO)  # Set the root logger level to INFO
+# Create a file handler to write logs to a file
+file_handler = logging.FileHandler(LOG_FILE_PATH, encoding='utf-8')
+file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+# Add the file handler and stream handler to the root logger
+root_logger.addHandler(file_handler)
+root_logger.addHandler(stream_handler)
+
+# Set up a logger for this module
+logger = logging.getLogger(__name__)
+
 
 
 # --- Global Configurations and Helper Functions ---
@@ -22,7 +40,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 async def add_random_delay(min_delay: float = 1, max_delay: float = 5):
     """Waits for a random duration between min_delay and max_delay seconds."""
     delay = random.uniform(min_delay, max_delay)
-    logging.info(f"Waiting for {delay:.2f} seconds...")
+    logger.info(f"Waiting for {delay:.2f} seconds...")
     await asyncio.sleep(delay)
 
 
@@ -50,8 +68,8 @@ async def safe_inner_text(locator) -> str:
             text=(await locator.inner_text()).strip()
             return text if text else None
     except Exception as e:
-        logging.debug(f"Could not get inner_text: {e}")  # Use debug for non-critical failures
-    return None
+        logger.debug(f"Could not get inner_text: {e}")  # Use debug for non-critical failures
+    return "N/A"
 
 
 async def safe_get_attribute(locator, attribute: str) -> str:
@@ -61,8 +79,8 @@ async def safe_get_attribute(locator, attribute: str) -> str:
             attr_value = await locator.get_attribute(attribute)
             return attr_value.strip() if attr_value else None
     except Exception as e:
-        logging.debug(f"Could not get attribute '{attribute}': {e}")
-    return None
+        logger.debug(f"Could not get attribute '{attribute}': {e}")
+    return "N/A"
 
 
 # --- Retry Strategy for Page Navigation ---
@@ -75,7 +93,7 @@ async def safe_get_attribute(locator, attribute: str) -> str:
 
 async def scrap_page_with_different_structure(page:Page, url:str, existing_data:str)->dict:
     '''Scrapes a page with a different HTML structure'''
-    logging.info(f'Using our Fallback data extraction method for {url}')
+    logger.info(f'Using our Fallback data extraction method for {url}')
 #revisit this if the scraper achieves inefficent results
 
 
@@ -89,9 +107,9 @@ async def goto_with_retry(page: Page, url: str, timeout: int = 60000):
     """
     Attempts to navigate to a URL with retry logic for network errors or timeouts.
     """
-    logging.info(f"Attempting to go to: {url}")
+    logger.info(f"Attempting to go to: {url}")
     await page.goto(url, timeout=timeout, wait_until="load")
-    logging.info(f"Successfully navigated to: {url}")
+    logger.info(f"Successfully navigated to: {url}")
 
 
 # --- Scraper Functions ---
@@ -106,7 +124,7 @@ async def scrape_all_pages(page: Page, main_url: str) -> list[str]:
     Includes robust retry logic, random delays, and handles pagination until no more pages are found.
     Ensures unique URLs are returned.
     """
-    logging.info(f"Starting multi-page scraping from: {main_url}")
+    logger.info(f"Starting multi-page scraping from: {main_url}")
     property_urls_set = set()
     current_page_number = 1
 
@@ -115,14 +133,14 @@ async def scrape_all_pages(page: Page, main_url: str) -> list[str]:
         await page.goto(main_url, wait_until='domcontentloaded', timeout=60000)
 
         while True:
-            logging.info(f"Scraping page {current_page_number}...")
+            logger.info(f"Scraping page {current_page_number}...")
 
             # Step 2: Wait for content to load on the current page.
 
             try:
                 await page.wait_for_selector('a.property-link', timeout=30000)
             except TimeoutError:
-                logging.warning(f"No property links found on page {current_page_number}, ending pagination.")
+                logger.warning(f"No property links found on page {current_page_number}, ending pagination.")
                 break
 
             # Add a random delay to mimic human behavior and avoid bot detection.
@@ -131,7 +149,8 @@ async def scrape_all_pages(page: Page, main_url: str) -> list[str]:
             # Step 3: Extract links from the current page.
             property_links_locators = page.locator('a.property-link')
             count = await property_links_locators.count()
-            logging.info(f"Found {count} potential property links on page {current_page_number}.")
+            logger.info(f"Found {count} potential property links on page {current_page_number}.")
+
 
             for i in range(count):
                 href = await property_links_locators.nth(i).get_attribute('href')
@@ -142,28 +161,27 @@ async def scrape_all_pages(page: Page, main_url: str) -> list[str]:
                     property_urls_set.add(href)
 
             # Step 4: Check for the "next page" button and break the loop if it's not found.
-            # CRITICAL: Inspect the target website's HTML to find the correct selector for the "next page" button.
-            # Common selectors include: 'a.pagination-next', 'a[rel="next"]', 'li.next a', etc.
+
             next_page_button = page.locator('a.next')
 
             if not await next_page_button.is_visible() or await next_page_button.is_disabled():
-                logging.info("No more pages found. Ending pagination.")
+                logger.info("No more pages found. Ending pagination.")
                 break
 
             # Step 5: Click the "next page" button and wait for the new page to load.
-            logging.info("Clicking the 'next' page button...")
+            logger.info("Clicking the 'next' page button...")
             await next_page_button.click()
-            logging.info("button found and clicked")
+            logger.info("button found and clicked")
             await page.wait_for_selector('a.property-link')
 
             current_page_number += 1
             await page.wait_for_timeout(1000)  # Small delay between clicks.
 
     except Exception as e:
-        logging.error(f"Error during multi-page scraping: {e}")
+        logger.error(f"Error during multi-page scraping: {e}")
 
     property_urls = list(property_urls_set)
-    logging.info(f"Scraping complete. Extracted {len(property_urls)} unique property URLs.")
+    logger.info(f"Scraping complete. Extracted {len(property_urls)} unique property URLs.")
     return property_urls
 
 async def scrape_apartment_page(page: Page, url: str) -> dict:
@@ -172,7 +190,7 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
     Includes robust error handling for individual data points, and extracts a limited
     number of floor plans.
     """
-    logging.info(f"Scraping detailed page: {url}")
+    logger.info(f"Scraping detailed page: {url}")
     data = {
         'title': 'N/A',
         'property_link': url,
@@ -197,7 +215,7 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
         'address_container': '.propertyAddressContainer',  # Container for street, city, state, zip
         'street_address': '.delivery-address span',
         'city_state_zip_container': '.propertyAddressContainer h2',  # Container for city, state, zip (as a block)
-        'city_span': 'span.address-city',
+        'city_span': "h2 > span.nth-of-type(2)",
         'state_zip_container': '.stateZipContainer',  # Specific state/zip container
         'property_reviews': '.reviewRating',
         'listing_verification': 'span.verifedText',  # its verifed and not verified the correct spelling
@@ -216,7 +234,13 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
         'details_link_attr': 'data-unitkey'  # Attribute, not a selector
     }
 
+
+    success_counter = 0
+    fail_counter = 0
+
     try:
+
+        logging.info(f"Scraping listing number :{url}")
         await goto_with_retry(page, url)
         await add_random_delay(2, 7)  # Longer delay after navigating to a detail page
 
@@ -227,7 +251,7 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
         #if there's the title selectors we scrap using our main scrap logic
 
         if is_standard_page:
-            logging.info('Standard page structure detected')
+            logger.info(f"Standard page structure detected for listing")
 
 
 
@@ -238,14 +262,21 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
             # --- Extract Main Property Details ---
             data['title'] = await safe_inner_text(page.locator(selectors['title']).first)
 
+
             # Extract and parse address components more robustly
             data['street'] = await safe_inner_text(page.locator(selectors['street_address']).first)
-            data['city'] = await safe_inner_text(page.locator(selectors['city_state_zip_container']).locator(
-                'span.address-city').first)  # Targeted city span
+
             data['state'] = await safe_inner_text(
                 page.locator(selectors['state_zip_container']).locator('span').nth(0))  # First span in stateZipContainer
             data['zip_code'] = await safe_inner_text(
                 page.locator(selectors['state_zip_container']).locator('span').nth(1))  # Second span in stateZipContainer
+            state_zip_locator = page.locator(selectors['state_zip_container'])
+            city_name_raw_handle = await state_zip_locator.evaluate_handle(
+                '(element) => element.previousSibling.textContent'
+            )
+            city_name = await city_name_raw_handle.json_value()
+            data['city'] = await safe_inner_text(page.locator(selectors['city_span']).first)
+
 
             # Reconstruct full address for consistency
             data['address'] = f"{data['street']}, {data['city']}, {data['state']} {data['zip_code']}"
@@ -282,13 +313,21 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
             all_units_data = []
             unit_cards_locators = page.locator(selectors['unit_cards'])
             unit_cards_count = await unit_cards_locators.count()
-            logging.info(f"Found {unit_cards_count} pricing and floor plans for {url}. Limiting to 1.")
+
 
             # Limit floor plans to a manageable number (e.g., 5) for efficiency and anti-bot.
             # Adjust '5' to any number you need. For testing, starting with 1 or 2 is good.
-            limit_floor_plans = min(unit_cards_count, 20)
+            limit_floor_plans = min(unit_cards_count, 30)  # Limit to 30 for performance, adjust as needed
+            if limit_floor_plans <= 0:
+                logger.warning(f"No unit cards found for {url}. Skipping pricing and floor plans extraction.")
+                data['pricing_and_floor_plans'] = []
+                return data
+            logger.info(f"Found {unit_cards_count} pricing and floor plans for {url}. Limiting to {limit_floor_plans}.")
 
+            floor_plans=0
             for i in range(limit_floor_plans):
+                floor_plans+=1
+                logger.info(f"Extracting unit card {i + 1}/{limit_floor_plans} for {url}")
                 unit_card = unit_cards_locators.nth(i)
                 unit_pricing_data = {
                     'apartment_name':"N/A", 'rent_price_range': 'N/A', 'bedrooms': 'N/A',
@@ -318,41 +357,53 @@ async def scrape_apartment_page(page: Page, url: str) -> dict:
 
                     unit_pricing_data['unit'] = await safe_inner_text(unit_card.locator(selectors['unit']))
                     unit_pricing_data['base_rent'] = await safe_inner_text(unit_card.locator(selectors['base_rent']))
-                    unit_pricing_data['availability'] = await safe_inner_text(unit_card.locator(selectors['availability']))
+                    availability_raw = await safe_inner_text(unit_card.locator(selectors['availability']))
+                    cleaned_availability = availability_raw.split('\n')[-1]
+                    unit_pricing_data['availability'] = cleaned_availability.strip() if cleaned_availability else 'N/A'
                     unit_pricing_data['details_link'] = await safe_get_attribute(unit_card, selectors['details_link_attr'])
 
                     all_units_data.append(unit_pricing_data)
 
                 except Exception as inner_e:
-                    logging.warning(f"Failed to scrape some unit details for {url}, unit {i}: {inner_e}")
+                    logger.warning(f"Failed to scrape some unit details for {url}, unit {i}: {inner_e}")
                     all_units_data.append(unit_pricing_data)  # Append partial data even on inner error
 
             data['pricing_and_floor_plans'] = all_units_data
 
-            logging.info(f"Finished extraction for standard page: {url}")
+            logger.info(f"Finished extraction for standard page: {url}")
+            LISTINGS_SCRAPED.labels(source='apartments_com').inc()
+            SCRAPER_SUCCESS.labels(source='apartments_com').inc()
         else:
-            logging.warning('Standard title not found redirecting to fallback data extraction method')
+            logger.warning('Standard title not found redirecting to fallback data extraction method')
             # data= scrape_page_with_different_structure(page,url,data)
+            LISTINGS_SCRAPED.labels(source='apartments_com').inc()
+            SCRAPER_SUCCESS.labels(source='apartments_com').inc()
 
-        SCRAPER_SUCCESS.labels(source='apartments_com').inc()
+
+        success_counter+=1
+        logger.info(f"Successfully scraped {success_counter}: {url} with {len(data['pricing_and_floor_plans'])} floor plans.")
+
         LISTINGS_SCRAPED.labels(source='apartments_com').inc()
+        SCRAPER_SUCCESS.labels(source='apartments_com').inc()
 
 
     except Exception as e:
         SCRAPER_FAILURES.labels(source='apartments_com').inc()
+        fail_counter+=1
 
-        logging.error(f"Error scraping apartment page {url} after retries: {e}")
+        logger.error(f"Error scraping apartment page {url} after retries: {e}")
+        logger.info(f"total failed scrapes: {fail_counter}")
         return data  # Return current data (possibly incomplete/N/A) if main scraping fails
 
     # --- 2. VALIDATE ---
     # The validation status can be set here based on critical fields.
     if data['address'] == 'N/A': #some properties scraped dont contain critical fields like title, pricing and floor plans since they need you to contact owner for the info so we cant use that data to decide whether our scraper scraped the listing well instead i have address since in all properties address is always available so we use that to jusdge our scrapers performance
         data['validation_status'] = 'Failed: Critical Data Missing'
-        logging.warning(f"Validation status: Failed for {url}")
+        logger.warning(f"Validation status: Failed for {url}")
         VALIDATION_FAILURES.labels(source='apartment_com').inc()
     else:
         data['validation_status'] = 'Success'
-        logging.info(f"Validation status: Success for {url}")
+        logger.info(f"Validation status: Success for {url}")
         VALIDATION_SUCCESS.labels(source='apartments_com').inc()
 
     return data
@@ -366,7 +417,7 @@ async def main():
     This function correctly uses asyncio.Semaphore for controlled concurrency
     and ensures distinct URLs are scraped.
     """
-    logging.info("Started the main function")
+    logger.info("Started the main function")
     start_time=time.time()
     scraped_final_data = []
     try:
@@ -381,20 +432,20 @@ async def main():
 
             # Use a page from the context for the main page scraping
             main_page_instance = await context.new_page()
-            main_url = 'https://www.apartments.com/chicago-il/'
+            main_url = 'https://www.apartments.com/boston-ma/'
             property_urls = await scrape_all_pages(main_page_instance, main_url)
             await main_page_instance.close()  # Close main page instance as it's not needed for detail scrapes
 
             # Limit the number of properties to scrape for faster testing/development
 
-            properties_to_scrape_limit = 100  # Set to 5 as a reasonable test sample
+            properties_to_scrape_limit = 500  # Set to 5 as a reasonable test sample
             limited_property_urls = property_urls[:properties_to_scrape_limit]
 
-            logging.info(
+            logger.info(
                 f"Found {len(property_urls)} properties on main page. Proceeding to scrape {len(limited_property_urls)} properties for detail.")
 
             # Use a semaphore to control concurrency
-            max_concurrent_pages = 5  # Reduced concurrency to 3 to be less aggressive. Adjust as needed.
+            max_concurrent_pages = 10  # Reduced concurrency to 3 to be less aggressive. Adjust as needed.
             semaphore = asyncio.Semaphore(max_concurrent_pages)
 
             tasks = []
@@ -406,14 +457,18 @@ async def main():
             results = await asyncio.gather(*tasks, return_exceptions=True)
 
             # Process results and separate successful scrapes from failures/exceptions
+
             for res in results:
+
+
                 if isinstance(res, dict) and res.get('validation_status') == 'Success':
                     scraped_final_data.append(res)
-                    LISTINGS_SCRAPED.labels(source=main_url)
+                    LISTINGS_SCRAPED.labels(source=main_url).inc()
+
                 else:
                     error_msg = str(res) if isinstance(res,
                                                        Exception) else f"Validation Failed: {res.get('property_link', 'N/A')}"
-                    logging.error(f"A property scrape failed or was invalid: {error_msg}")
+                    logger.error(f"A property scrape failed or was invalid: {error_msg}")
                     SCRAPER_FAILURES.labels(source=main_url).inc()
 
             # Ensure all pages opened within the context are closed
@@ -422,15 +477,15 @@ async def main():
                     await page_instance.close()
             await browser.close()
 
-            logging.info(f"Total successful property data entries collected: {len(scraped_final_data)}")
+            logger.info(f"Total successful property data entries collected: {len(scraped_final_data)}")
 
-            with open("apartments_data.json", "w", encoding="utf-8") as f:
+            with open("apartments_data2.json", "w", encoding="utf-8") as f:
                 json.dump(scraped_final_data, f, ensure_ascii=False, indent=4)
             return scraped_final_data
 
     except Exception as e:
         RETRIES_ATTEMPTED.labels(source=main_url).inc()
-        logging.critical(f"A critical error occurred in main execution: {e}", exc_info=True)
+        logger.critical(f"A critical error occurred in main execution: {e}", exc_info=True)
 
 
         with open("apartments_data.json", "w", encoding="utf-8") as f:
@@ -440,7 +495,7 @@ async def main():
     finally:
         stop_time = time.time()
         total_time_taken = stop_time - start_time
-        logging.info(f"It has taken {total_time_taken} seconds to complete.")
+        logger.info(f"It has taken {total_time_taken/60:.2f} minutes to complete.")
         SCRAPE_DURATION.labels(source=url).observe(total_time_taken)
 
         #update resource packages
@@ -473,7 +528,7 @@ async def run_scraper_mode(headless_mode: bool, p_instance):
     context = await browser.new_context(user_agent=random.choice(USER_AGENTS))
     page = await context.new_page()
 
-    main_url = 'https://www.apartments.com/chicago-il/'
+    main_url = 'https://www.apartments.com/boston-ma/'
     property_urls = await scrape_all_pages(page, main_url)
 
     # Limit properties for comparison run to keep it manageable and fast
@@ -525,9 +580,9 @@ async def compare_performance():
 if __name__ == '__main__':
     from prometheus_client import start_http_server
     start_http_server(8001)
-    logging.info("HTTP server started, begining data extraction")
+    logger.info("HTTP server started, beggining data extraction")
     scraped_data_output = asyncio.run(main())
-    logging.info(f"\nFinal Scraped Data Summary: Collected {len(scraped_data_output)} successful property entries.")
+    logger.info(f"\nFinal Scraped Data Summary: Collected {len(scraped_data_output)} successful property entries.")
     from db_ops import save_scraped_data_to_db
-    #asyncio.run(save_scraped_data_to_db(scraped_data_output))
+    asyncio.run(save_scraped_data_to_db(scraped_data_output))
     #asyncio.run(compare_performance())
